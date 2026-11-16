@@ -4,9 +4,8 @@
 
 ## 1. Inputs and Reconstruction Pipeline
 
-- **输入**包括 UOB Innovation Hub 的多视角照片与对应点。按当前计划采集 25 张照片、标识 8 个跨视图地标。以统一的地标 ID $j$ 将同一地标在各图中的像素观测组成轨迹。若原始数据以图像对为单位，先按匹配关系合并轨迹，并检查同一轨迹在同一张图中最多有一次观测。
-- **相机模型**使用秩为 3 的 $3\times 4$ 投影矩阵 $P_i$。记 $\mathbf u_{ij}=(u_{ij},v_{ij})$ 为标注的像素坐标，波浪号表示齐次坐标，则 $\tilde{\mathbf u}_{ij}\sim P_i\tilde{\mathbf X}_j$。拟直接使用原图像素并假设残余镜头畸变较小，采集时优先用手机主摄，避免超广角。［3，6］
-- **采集条件**确保至少一对有明显视差的照片共同看见全部 8 个地标，其余照片尽量让至少 6 个已重建地标可见。移动拍摄位置，在建筑不同立面或前后层次选点，避免所有地标集中在同一面墙上。［4，7］
+- **输入**包括 $N$ 张多视角图像和 $M$ 条跨视图地标轨迹。以统一的地标 ID $j$ 将同一地标在各图中的像素观测组成轨迹。若原始数据以图像对为单位，先按匹配关系合并轨迹，并检查同一轨迹在同一张图中最多有一次观测。具体采集设置见报告的 [Experiments 章节](../report/main.tex)。
+- **相机模型**为第 $i$ 张图像使用秩为 3 的 $3\times 4$ 投影矩阵 $P_i$。记 $\mathbf u_{ij}=(u_{ij},v_{ij})$ 为标注的像素坐标，波浪号表示齐次坐标，则 $\tilde{\mathbf u}_{ij}\sim P_i\tilde{\mathbf X}_j$。拟直接使用原图像素并假设残余镜头畸变较小。［3，6］
 - **流程图**可用一行展示。照片与对应点 → 地标轨迹 → 基础矩阵与种子投影相机 → 初始三角化 → 增量注册与三角化 → 束调整 → 投影相机与稀疏点云。
 - **实现分工**参考 OpenSfM 的增量流程组织。给定对应点直接进入轨迹构建，小组实现投影相机初始化、增量注册、三角化及束调整残差。OpenSfM 默认重建使用其相机模型和位姿表示，本方案的 $P_i$ 由自研几何模块维护。正文注明实际复用的接口。［1，2，7］
 
@@ -29,7 +28,7 @@ If no seed passes validation, return an initialization failure
 
 Repeat until all images are registered or a full pass registers no image:
     Rank unregistered images by the number of observed reconstructed landmarks
-    For each eligible image in that order:
+    For each image in that order with at least six observed reconstructed landmarks:
         Build 2D–3D pairs by joining image observations and 3D landmarks by ID
         Estimate the projection matrix using DLT and validate it by reprojection
         If validation fails, leave the image unregistered for the next pass
@@ -56,7 +55,7 @@ Export projection matrices, sparse projective landmarks, and unregistered image 
 
 重复以下步骤，直至所有图像均已注册，或一整轮未注册任何新图像：
     按各未注册图像观测到的已重建地标数降序排列
-    按此顺序处理每张符合条件的图像：
+    按此顺序处理至少观测到 6 个已重建地标的图像：
         按地标 ID 将图像观测与三维地标配对，建立 2D–3D 对应
         用 DLT 估计投影矩阵，并检验重投影误差
         若检验失败，则暂缓注册，留待下一轮处理
@@ -74,7 +73,7 @@ Export projection matrices, sparse projective landmarks, and unregistered image 
 ### 2.2 Camera registration and triangulation
 
 - **注册新相机**时，用已三角化的地标 ID 建立至少 6 组非退化的 2D–3D 对应，对像素和三维点做坐标归一化，再用直接线性变换（DLT）估计 $P_i$。每组对应从 $\tilde{\mathbf u}_{ij}\times(P_i\tilde{\mathbf X}_j)=0$ 提供两个独立线性约束。SVD 求解后反归一化，检查相机矩阵的秩及像素重投影误差。对应不足或方程病态的图像暂缓。［3，7］
-- **线性三角化**使用同一约束，但此时将各已注册视图的 $P_i$ 视为已知，对 $\tilde{\mathbf X}_j$ 求解。堆叠至少两个视图的约束，用 SVD 求齐次三维点，并检查数值稳定性及像素重投影误差。若 8 个地标都已由种子图像对恢复，此后加入视图主要增加观测并约束已有地标。［3，6，7］
+- **线性三角化**使用同一约束，但此时将各已注册视图的 $P_i$ 视为已知，对 $\tilde{\mathbf X}_j$ 求解。堆叠至少两个视图的约束，用 SVD 求齐次三维点，并检查数值稳定性及像素重投影误差。若种子图像对已恢复全部 $M$ 个地标，后续注册的图像将为这些地标提供更多观测。［3，6，7］
 
 ### 2.3 Bundle adjustment
 
@@ -90,7 +89,7 @@ Export projection matrices, sparse projective landmarks, and unregistered image 
 
 ## 3. Reconstruction Output
 
-- 用 JSON 导出投影矩阵及按地标 ID 索引的齐次三维坐标，并记录未注册图像。需要展示时，将当前坐标系中的有限点转为非齐次坐标后导出 PLY。若有效输入为 8 条地标轨迹，最多重建 8 个地标。［1，3］
+- 用 JSON 导出投影矩阵及按地标 ID 索引的齐次三维坐标，并记录未注册图像。需要展示时，将当前坐标系中的有限点转为非齐次坐标后导出 PLY。由 $M$ 条输入轨迹最多重建 $M$ 个地标。［1，3］
 - 结果属于投影重建，未知的三维投影变换可能改变距离、角度和平行关系。点云可用于可视化和重投影检验，建筑尺寸和真实相机姿态需要额外的度量约束。Experiments 可报告注册率、保留地标数及束调整前后的像素重投影误差。［3，6，7］
 
 ## References
