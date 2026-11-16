@@ -4,6 +4,11 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[margin=25mm]{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+
+\algrenewcommand{\algorithmiccomment}[1]{\hfill\textcolor{gray}{\(\triangleright\)\ #1}}
 
 \begin{document}
 
@@ -30,6 +35,19 @@
 
 \section{Methodology}
 \label{sec:methodology}
+
+% Uncomment and adapt this pseudocode template.
+% \begin{algorithm}[htbp]
+%   \caption{Algorithm title}
+%   \label{alg:example}
+%   \begin{algorithmic}[1]
+%     \Require Input data $X$
+%     \Ensure Result $Y$
+%     \State $Y \gets \Call{Process}{X}$ \Comment{Describe this step}
+%     \Statex \Comment{Add a standalone comment}
+%     \State \Return $Y$
+%   \end{algorithmic}
+% \end{algorithm}
 
 \section{Experiments}
 \label{sec:experiments}
