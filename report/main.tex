@@ -7,6 +7,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{xcolor}
+\usepackage{url}
 
 \algrenewcommand{\algorithmiccomment}[1]{\hfill\textcolor{gray}{\(\triangleright\)\ #1}}
 
@@ -27,7 +28,7 @@
 
   \vspace*{\fill}
   {\small\textbf{Generative AI disclosure.}
-    OpenAI Codex was used to create the LaTeX report template.\par}
+    OpenAI Codex was used to create the LaTeX report template and prepare the reference list.\par}
 \end{titlepage}
 
 \section{Introduction}
@@ -60,12 +61,9 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-\section*{References}
-% Use the heading text as the reference for this unnumbered section.
-\begingroup
-  \makeatletter
-  \def\@currentlabel{References}
-  \label{sec:references}
-\endgroup
+% Keep the methodology draft's reference order until the in-text citations are added.
+\nocite{opensfm,schonberger2016sfm,hartley2004mvg,hartley1997eightpoint,triggs2000bundle,ai6121perspective,hartley1994euclidean,mohr1994projective}
+\bibliographystyle{unsrt}
+\bibliography{references}
 
 \end{document}
