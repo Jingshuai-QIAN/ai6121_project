@@ -4,9 +4,9 @@
 
 ## 项目简介
 
-本项目使用运动恢复结构（Structure from Motion，SfM）方法，从多视角照片重建南洋理工大学校园内大华银行创新中心（小笼包）的三维结构。 [南洋理工大学校园导览](https://www.ntu.edu.sg/life-at-ntu/museum/campus-art-trail)
+本项目使用运动恢复结构（Structure from Motion，SfM）方法，从多视角照片重建「双螺旋」（Double Helix）的三维结构。[双螺旋视频](data/video/double_helix.mp4)
 
-小组计划为大华银行创新中心拍摄 25 张不同视角的照片，并使用图像间的 8 个对应点。
+小组计划为「双螺旋」拍摄 25 张不同视角的照片，并使用图像间的 8 个对应点。
 
 ## 项目结构
 
@@ -14,7 +14,8 @@
 .
 ├── data/           # 项目数据
 │   ├── figures/    # 用于三维重建的照片
-│   └── points/     # 照片之间的对应点
+│   ├── points/     # 照片之间的对应点
+│   └── video/      # 双螺旋视频
 ├── report/         # LaTeX 报告源文件
 ├── .gitignore      # Git 忽略规则
 ├── README.md       # 英文项目说明

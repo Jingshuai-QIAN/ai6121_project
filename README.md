@@ -4,9 +4,9 @@
 
 ## Project Overview
 
-This AI6121 course project uses structure from motion (SfM) to reconstruct the 3D structure of UOB Innovation Hub (Xiaolongbao) on the Nanyang Technological University campus from multi-view photographs. [NTU campus guide](https://www.ntu.edu.sg/life-at-ntu/museum/campus-art-trail)
+This AI6121 course project uses structure from motion (SfM) to reconstruct the 3D structure of an object we call Double Helix from multi-view photographs. [Video of Double Helix](data/video/double_helix.mp4)
 
-We plan to take 25 photographs of UOB Innovation Hub and use eight corresponding points across the images.
+We plan to take 25 photographs of Double Helix and use eight corresponding points across the images.
 
 ## Project Structure
 
@@ -14,7 +14,8 @@ We plan to take 25 photographs of UOB Innovation Hub and use eight corresponding
 .
 ├── data/           # Project data
 │   ├── figures/    # Photographs for reconstruction
-│   └── points/     # Corresponding points across photographs
+│   ├── points/     # Corresponding points across photographs
+│   └── video/      # Video of Double Helix
 ├── report/         # LaTeX report sources
 ├── .gitignore      # Git ignore rules
 ├── README.md       # English project overview
