@@ -17,6 +17,8 @@
   hypertexnames=false
 }
 
+\algrenewcommand{\algorithmicrequire}{\textbf{Input:}}
+\algrenewcommand{\algorithmicensure}{\textbf{Output:}}
 \algrenewcommand{\algorithmiccomment}[1]{\hfill\textcolor{gray}{\(\triangleright\)\ #1}}
 
 \begin{document}
@@ -45,18 +47,18 @@
 \section{Methodology}
 \label{sec:methodology}
 
-% Uncomment and adapt this pseudocode template.
-% \begin{algorithm}[htbp]
-%   \caption{Algorithm title}
-%   \label{alg:example}
-%   \begin{algorithmic}[1]
-%     \Require Input data $X$
-%     \Ensure Result $Y$
-%     \State $Y \gets \Call{Process}{X}$ \Comment{Describe this step}
-%     \Statex \Comment{Add a standalone comment}
-%     \State \Return $Y$
-%   \end{algorithmic}
-% \end{algorithm}
+
+\begin{algorithm}[htbp]
+  \caption{Algorithm title}
+  \label{alg:example}
+  \begin{algorithmic}[1]
+    \Require Input data $X$
+    \Ensure Result $Y$
+    \State $Y \gets \Call{Process}{X}$ \Comment{Describe this step}
+    \Statex \Comment{Add a standalone comment}
+    \State \Return $Y$
+  \end{algorithmic}
+\end{algorithm}
 
 \section{Experiments}
 \label{sec:experiments}
