@@ -7,7 +7,15 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{xcolor}
-\usepackage{url}
+\usepackage{hyperref}
+
+\definecolor{linkblue}{HTML}{174A8B}
+\hypersetup{
+  colorlinks=true,
+  allcolors=linkblue,
+  % The title page and the first body page share a page number.
+  hypertexnames=false
+}
 
 \algrenewcommand{\algorithmiccomment}[1]{\hfill\textcolor{gray}{\(\triangleright\)\ #1}}
 
