@@ -6,7 +6,7 @@
 
 This AI6121 course project uses structure from motion (SfM) to reconstruct the 3D structure of an object we call Double Helix from multi-view photographs. [Video of Double Helix](data/video/double_helix.mp4)
 
-We plan to take 25 photographs of Double Helix and use eight corresponding points across the images.
+We plan to take 25 photographs of Double Helix and mark the same eight landmarks in every photograph.
 
 ## Project Structure
 
