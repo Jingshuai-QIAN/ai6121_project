@@ -58,22 +58,23 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
     \Require \(\mathcal{I}\) as the set of images, and \(\mathcal{U}\) as the set of 2D point's positions in images
     \Ensure \(\mathcal{P}\) as the set of estimated projective matrices, and \(\mathcal{X}\) as the set of estimated coordinates of 3D target points
     \State Pick seed images \(I_a, I_b\) where \(a, b \in \{ 1, \dots, M \}\)
-    \State Pick corresponding 2D points' positions into a set \(\mathcal{U}_s = \{ \tilde{\mathbf u}_{ij} \mid i \in \{a, b\}; j = 1, \dots, N \}\)
-    \State Estimate fundamental matrices of \(I_a, I_b\) as \(\mathbf{F}_a, \mathbf{F}_b\) using Algorithm \ref{alg:fundamenal-matrix}
+    \State Estimate the fundamental matrix \(I_a, I_b\) as \(\mathbf{F}\) using Algorithm \ref{alg:fundamenal-matrix}
+    \State Solve \(\mathbf e_b\) from \(F^\top\mathbf e_b = 0, \|\mathbf e_b\|_2 = 1\)
+    \State \(\mathbf{P}_a \gets [\mathbf{I} \mid \mathbf 0]; \quad \mathbf{P}_b \gets [-[\mathbf e_b]_\times \mathbf F \mid \mathbf e_b]\)
   \end{algorithmic}
 \end{algorithm}
 
 \subsection{Fundamental Matrix Estimation}
 
-Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the fundamental matrix of each seed image.
+Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the fundamental matrix of a pair of seed images.
 
 \begin{algorithm}[htbp]
   \caption{Fundamental Matrix Estimation}
   \label{alg:fundamenal-matrix}
   \begin{algorithmic}[1]
-    \Require \(I_a, I_b\) as seed images where \(a, b \in \{ 1, \dots, M \}\), and \(\mathcal{U}_s\) as the set of positions of corresponding 2D points in seed images
-    \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix respectively of seed image \(I_i, i \in \{a, b\}\)
-    \State \(\bar{\mathbf u}_i \gets \frac{1}{m}\sum_{j=1}^{m}\mathbf u_{ij}; \quad d_i \gets \frac{1}{m}\sum_{j=1}^{m}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
+    \Require \(I_i \in \mathcal{I}\) and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
+    \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix of \(I_i\)
+    \State \(\bar{\mathbf u}_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}; \quad d_i \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
     \State \(\mathbf{T}_i \gets \begin{bmatrix}
 s_i & 0 & -s_i\bar u_i\\
 0 & s_i & -s_i\bar v_i\\
@@ -89,6 +90,21 @@ x_{bj} & y_{bj} & 1
     \State Use SVD to decompose \(\mathbf{F}_0\) as \(\mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,\sigma_3) \mathbf{V}_{\mathbf{F}}^\top\) where \(\sigma_1\ge \sigma_2\ge \sigma_3\)
     \State \(\hat{\mathbf{F}} = \mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,0) \mathbf{V}_{\mathbf{F}}^{\top}\) \Comment{Constraint that \(\operatorname{rank}(\mathbf{F}) = 2\)}
     \State \(\mathbf{F} \gets \mathbf{T}_b^\top \hat{\mathbf{F}} \mathbf{T}_a\)
+    \State \Return \(\mathbf{F}\)
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Triangulation with Seed Images}
+
+Algorithm \ref{alg:triangulation-seed} demonstrates how the pipeline estimates target 3D points' coordinates based on 2D points' positions and estimated projective matrices of the seed images.
+
+\begin{algorithm}[htbp]
+  \caption{Triangulation with Seed Images}
+  \label{alg:triangulation-seed}
+  \begin{algorithmic}[1]
+    \Require \(\mathbf{P}_i\) and \(\{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
+    \Ensure \(\mathbf{X}_j, j = 1, \dots, N\) as the estimated coordinates of target 3D points
+    \State
   \end{algorithmic}
 \end{algorithm}
 
