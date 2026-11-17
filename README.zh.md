@@ -6,9 +6,7 @@
 
 本项目使用运动恢复结构（Structure from Motion，SfM）方法，从多视角照片重建「双螺旋」（Double Helix）的三维结构。[双螺旋视频](data/video/double_helix.mp4)
 
-当前确定的路线（2026-11-18）是：相机标定、SIFT 自动特征匹配、增量式稀疏 SfM 与 Bundle Adjustment。先用少量视图验证，再以约 25 张清晰、具有重叠与平移视差的图像完成主要实验。项目采用 CPU 上的 NumPy、OpenCV 和 SciPy，不需要 PyTorch。
-
-实现前请阅读[架构与接口设计](docs/SFM_ARCHITECTURE.md)和[Agent 任务与启动说明](docs/SFM_AGENT_TASKS.md)。目前仓库尚无 SfM 实现；`report/main.tex` 中的“8 个手工地标 + 射影重建”是旧方案，须按新实现更新，不能当作当前已完成的方法。
+小组计划为「双螺旋」拍摄 25 张不同视角的照片，并在每张照片中标注同一组 8 个地标。
 
 ## 项目结构
 

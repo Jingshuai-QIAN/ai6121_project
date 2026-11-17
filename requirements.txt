@@ -1,0 +1,7 @@
+# Verified on CPython 3.11.17 (Linux, CPU)
+numpy==2.4.6
+scipy==1.17.1
+opencv-python-headless==5.1.0.95
+matplotlib==3.11.2
+# Metadata-only fallback when ffprobe is unavailable
+av==18.1.0
