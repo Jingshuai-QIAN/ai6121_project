@@ -213,7 +213,7 @@ In this way, bundle adjustment solves the following optimization problem.
 \label{sec:experiments}
 % How to conduct experiments, e.g. settings, expected results
 
-The experiment uses \(M = 25\) images of Double Helix taken from different viewpoints. In each image \(I_i, i = \{1, \dots, M\}\), the project records the 2D pixel coordinates \(\mathbf u_{ij}, j = 1, \dots, N\) of the same \(N = 8\) landmarks. The landmark index \(j\) links corresponding observations across images.
+The experiment uses \(M = 25\) images of Double Helix taken from different viewpoints. In each image \(I_i, i = 1, \dots, M\), the project records the 2D pixel coordinates \(\mathbf u_{ij}, j = 1, \dots, N\) of the same \(N = 8\) landmarks. The landmark index \(j\) links corresponding observations across images.
 
 The SfM pipeline described in Section~\ref{sec:methodology} takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The estimated points form a sparse reconstruction. The project assesses the spatial arrangement of the reconstructed landmarks qualitatively by inspecting the point cloud from different viewpoints and comparing it with the input images.
 
