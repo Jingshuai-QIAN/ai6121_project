@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}
+
+\bibitem{lowe2004sift}
+David~G. Lowe.
+\newblock Distinctive image features from scale-invariant keypoints.
+\newblock {\em International Journal of Computer Vision}, 60(2):91--110, 2004.
+
+\bibitem{arandjelovic2012root}
+Relja Arandjelovi{\'c} and Andrew Zisserman.
+\newblock Three things everyone should know to improve object retrieval.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, pages 2911--2918, 2012.
+
+\bibitem{hartley1997eightpoint}
+Richard~I. Hartley.
+\newblock In defense of the eight-point algorithm.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, 19(6):580--593, 1997.
+
+\bibitem{hartley2004mvg}
+Richard Hartley and Andrew Zisserman.
+\newblock {\em Multiple View Geometry in Computer Vision}.
+\newblock Cambridge University Press, second edition, 2004.
+
+\bibitem{schonberger2016sfm}
+Johannes~L. Sch{\"o}nberger and Jan-Michael Frahm.
+\newblock {Structure-from-Motion} revisited.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, pages 4104--4113, 2016.
+
+\bibitem{triggs2000bundle}
+Bill Triggs, Philip~F. McLauchlan, Richard~I. Hartley, and Andrew~W. Fitzgibbon.
+\newblock Bundle adjustment --- a modern synthesis.
+\newblock In {\em Vision Algorithms: Theory and Practice}, volume 1883 of {\em Lecture Notes in Computer Science}, pages 298--372. Springer, 2000.
+
+\end{thebibliography}

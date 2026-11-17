@@ -1,4 +1,12 @@
-/docs/
+/docs/*
+!/docs/SFM_ARCHITECTURE.md
 /AGENTS.md
 /tmp/
 /report/build/
+/outputs/
+/output/
+/.venv/
+__pycache__/
+!/docs/SFM_RESULTS.md
+/.venv-sfm/
+!/docs/交接说明.md
