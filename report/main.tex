@@ -74,8 +74,8 @@ Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the f
   \begin{algorithmic}[1]
     \Require \(I_i \in \mathcal{I}\) and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
     \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix of \(I_i\)
-    \State \(\bar{\mathbf u}_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}; \quad d_i \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
-    \State \(\mathbf{T}_i \gets \begin{bmatrix}
+    \State \label{line:fundamental-matrix-normalization-parameters} \(\bar{\mathbf u}_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}; \quad d_i \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
+    \State \label{line:fundamental-matrix-normalize-points} \(\mathbf{T}_i \gets \begin{bmatrix}
 s_i & 0 & -s_i\bar u_i\\
 0 & s_i & -s_i\bar v_i\\
 0 & 0 & 1
