@@ -56,8 +56,8 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
   \caption{Structure-from-Motion (SfM)}
   \label{alg:sfm}
   \begin{algorithmic}[1]
-    \Require \(\mathcal{I}\) as the set of images, and \(\mathcal{U}\) as the set of 2D point's positions in images
-    \Ensure \(\mathcal{P}\) as the set of estimated projective matrices, and \(\mathcal{X}\) as the set of estimated coordinates of 3D target points
+    \Require \(\mathcal{I}\), \(\mathcal{U}\)
+    \Ensure \(\mathcal{P}\), \(\mathcal{X}\)
     \State Pick seed images \(I_a, I_b\) where \(a, b \in \{ 1, \dots, M \}\)
     \State Estimate the fundamental matrix \(I_a, I_b\) as \(\mathbf{F}\) using Algorithm \ref{alg:fundamenal-matrix}
     \State Solve \(\mathbf e_b\) from \(F^\top\mathbf e_b = 0, \|\mathbf e_b\|_2 = 1\)
@@ -66,7 +66,10 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
     \State \(\mathcal{X} \gets \{ \mathbf X_j \mid j = 1, \dots, N \}\)
     \For{image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\)}
       \State Estimate projective matrix \(\mathbf P_i\) of the current image using Algorithm \ref{alg:projective-matrix-nonseed}
+      \State Add \(\mathbf P_i\) into \(\mathcal{P}\)
     \EndFor
+    \State Apply Section \ref{sec:bundle-adjustment} to adjust contents in \(\mathcal{X}\) and \(\mathcal{P}\), where \(\mathbf P_i^\text{init} \gets \mathbf P_i, i = 1, \dots, M\) and \(\mathbf X_j^\text{init} \gets \mathbf X_j, j = 1, \dots, N\)
+    \State \Return \(\mathcal{X}, \mathcal{P}\)
   \end{algorithmic}
 \end{algorithm}
 
@@ -170,6 +173,35 @@ s_{\mathbf{X}} I_3 & -s_{\mathbf{X}} \mathbf c_i\\
     \State \Return \(\mathbf{P}_i \gets \mathbf T_i^{-1} \hat{\mathbf P}_i \mathbf S_i\)
   \end{algorithmic}
 \end{algorithm}
+
+\subsection{Bundle Adjustment}
+\label{sec:bundle-adjustment}
+
+Bundle adjustment is used to adjust the estimated projective matrices of images and estimated coordinates of 3D points. Define \([K] = \{1, \dots, K\}, K \in \mathbb{N}_{+}\). Define \(\Omega = [M] \times [N]\). For a vector \(\mathbf q = (q_1, q_2, q_3)^\top, q_3 \neq 0\), define an operator \(\pi(\mathbf q)\) as
+\begin{equation}\label{eq:pi}
+  \pi(\mathbf q) = \begin{pmatrix} q_1/q_3\\ q_2/q_3 \end{pmatrix}.
+\end{equation}
+Choose \(5\) of 3D points to define a projective frame. Collect the chosen points' indices into the set \(\mathcal{J}_{\text{ref}}\). Denote the given estimated homogeneous coordinates of the \(j\)th 3D point as \(\mathbf{X}_j^\text{init}, j \in [N]\). Denote the given estimated projective matrix of image \(i\) as \(\mathbf P_i^\text{init}, i \in [M]\). For each of such matrices, select a non-zero entry from \(\mathbf P_i^\text{init}\) and get its position \((r_i, c_i)\). Initialize the matrix as
+\begin{equation}
+  \mathbf P_i^0 \gets\frac{\mathbf P_i^\text{init}}{(\mathbf P_i^\text{init})_{r_i,c_i}}
+\end{equation}
+For 3D points with indices \(j \in [N] \setminus \mathcal{J}_{\text{ref}}\), select a non-zero entry from \(\mathbf{X}_j^\text{init}\) and denote the entry's index as \(k_j\). Initialize each point's coordinate as
+\begin{equation}
+  \mathbf X_j^0 \gets \frac{\mathbf X_j^\text{init}}{(\mathbf X_j^\text{init})_{k_j}}
+\end{equation}
+In this way, the adjustment is modeled as the following optimization problem:
+\begin{equation}\label{eq:bundle-adjustment}
+  \begin{aligned}
+    \min_{\mathbf P_i,\mathbf X_j} &\sum_{(i,j)\in\Omega} \left\|\tilde{\mathbf u}_{ij}-\pi\!\left(\mathbf P_i \mathbf X_j\right)\right\|_2^2 \\
+    \text{s.t.} \quad &\det\!\begin{bmatrix}
+  \mathbf X_{j_1}^0 & \mathbf X_{j_2}^0 & \mathbf X_{j_3}^0 & \mathbf X_{j_4}^0
+  \end{bmatrix}\ne 0,\quad
+  \forall\,j_1<j_2<j_3<j_4, \quad j_1, j_2, j_3, j_4 \in [N] \\
+  & \mathbf{X}_j = \mathbf{X}_j^\text{init}, \quad j \in \mathcal{J}_{\text{ref}} \\
+  & \left(\mathbf P_i\right)_{r_i, c_i} = 1, \quad \forall i \in [M] \\
+  & \left(\mathbf{X}_j\right)_{k_j} = 1, \quad \forall j \in [N] \setminus \mathcal{J}_{\text{ref}}
+  \end{aligned}
+\end{equation}
 
 \section{Experiments}
 \label{sec:experiments}
