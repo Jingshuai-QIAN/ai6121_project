@@ -49,7 +49,7 @@
 \subsection{Overall Review of SfM}
 \label{sec:overall-sfm}
 
-Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) pipeline applied by this project. The pipeline requires \(M \geq 2\) images of the target scene and positions of corresponding 2D points of \(N \geq 8\) target 3D points for reconstruction. The images are stored in a set \(\mathcal{I} = \{ I_i \mid i = 1, 2, 3, \dots, M \}\) where \(I_i\) is the image with index \(i\). For the \(j\)th target 3D point, its corresponding 2D point's position in image \(I_i\) is denoted as \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). All 2D point's positions are stored in a set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M; j = 1, \dots, N \}\). The pipeline outputs: (1) the set of estimated projective matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) where \(\mathbf{P}_i\) is the projective matrix of image \(I_i\); and (2) the set of estimated coordinates of 3D target points \(\mathcal{X} = \{ \mathbf{x}_j \mid j = 1, \dots, N \}\) where \(\mathbf{x}_j\) is the \(j\)th target 3D point's coordinate.
+Algorithm~\ref{alg:sfm} summarizes the incremental structure-from-motion (SfM) pipeline used in this project~\cite{opensfm,schonberger2016sfm}. The pipeline starts by recovering the seed camera matrices from the fundamental matrix~\cite[Sec.~9.5]{hartley2004mvg}. It takes \(M \geq 2\) images of the target scene and the 2D observations of \(N \geq 8\) target 3D points in each image. The images form the set \(\mathcal{I} = \{ I_i \mid i = 1, \dots, M \}\). The image coordinates of the \(j\)th 3D point in image \(I_i\) are \(\mathbf u_{ij}=(u_{ij},v_{ij})^\top\), with homogeneous coordinates \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). The observations form the set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M,\ j = 1, \dots, N \}\). The pipeline returns the estimated camera projection matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) and the estimated homogeneous coordinates of the 3D points \(\mathcal{X} = \{ \mathbf{X}_j \mid j = 1, \dots, N \}\).
 
 
 \begin{algorithm}[htbp]
@@ -58,46 +58,46 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
   \begin{algorithmic}[1]
     \Require \(\mathcal{I}\), \(\mathcal{U}\)
     \Ensure \(\mathcal{P}\), \(\mathcal{X}\)
-    \State Pick seed images \(I_a, I_b\) where \(a, b \in \{ 1, \dots, M \}\)
-    \State Estimate the fundamental matrix \(I_a, I_b\) as \(\mathbf{F}\) using Algorithm \ref{alg:fundamenal-matrix}
-    \State Solve \(\mathbf e_b\) from \(F^\top\mathbf e_b = 0, \|\mathbf e_b\|_2 = 1\)
-    \State \(\mathbf{P}_a \gets [\mathbf{I} \mid \mathbf 0]; \quad \mathbf{P}_b \gets [-[\mathbf e_b]_\times \mathbf F \mid \mathbf e_b]; \quad \mathcal{P} \gets \{\mathbf{P}_a, \mathbf{P}_b\}\)
-    \State Estimate target 3D points' coordinates \(\mathbf X_j, j = 1, \dots, N\) with information about seed images using Algorithm \ref{alg:triangulation-seed}
+    \State Pick two seed images \(I_a, I_b \in \mathcal{I}\)
+    \State Estimate the fundamental matrix \(\mathbf F\) for \(I_a\) and \(I_b\) using Algorithm~\ref{alg:fundamental-matrix}
+    \State Find the epipole \(\mathbf e_b\) such that \(\mathbf F^\top\mathbf e_b = \mathbf 0\) and \(\|\mathbf e_b\|_2 = 1\)
+    \State \(\mathbf{P}_a \gets [\mathbf{I}_3 \mid \mathbf 0]; \quad \mathbf{P}_b \gets [-[\mathbf e_b]_\times \mathbf F \mid \mathbf e_b]; \quad \mathcal{P} \gets \{\mathbf{P}_a, \mathbf{P}_b\}\)
+    \State Estimate \(\mathbf X_j\) for each \(j = 1, \dots, N\) using Algorithm~\ref{alg:triangulation-seed}
     \State \(\mathcal{X} \gets \{ \mathbf X_j \mid j = 1, \dots, N \}\)
     \For{image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\)}
-      \State Estimate projective matrix \(\mathbf P_i\) of the current image using Algorithm \ref{alg:projective-matrix-nonseed}
-      \State Add \(\mathbf P_i\) into \(\mathcal{P}\)
+      \State Estimate the camera projection matrix \(\mathbf P_i\) using Algorithm~\ref{alg:projective-matrix-nonseed}
+      \State Add \(\mathbf P_i\) to \(\mathcal{P}\)
     \EndFor
-    \State Apply Section \ref{sec:bundle-adjustment} to adjust contents in \(\mathcal{X}\) and \(\mathcal{P}\), where \(\mathbf P_i^\text{init} \gets \mathbf P_i, i = 1, \dots, M\) and \(\mathbf X_j^\text{init} \gets \mathbf X_j, j = 1, \dots, N\)
-    \State \Return \(\mathcal{X}, \mathcal{P}\)
+    \State Refine \(\mathcal{P}\) and \(\mathcal{X}\) using bundle adjustment (Section~\ref{sec:bundle-adjustment}), with \(\mathbf P_i^\text{init} \gets \mathbf P_i\) for \(i = 1, \dots, M\) and \(\mathbf X_j^\text{init} \gets \mathbf X_j\) for \(j = 1, \dots, N\)
+    \State \Return \(\mathcal{P}, \mathcal{X}\)
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Estimation of Fundamental Matrix}
+\subsection{Estimation of the Fundamental Matrix}
 
-Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the fundamental matrix of a pair of seed images.
+Algorithm~\ref{alg:fundamental-matrix} estimates the fundamental matrix for the seed image pair using the normalized eight-point algorithm~\cite{hartley1997eightpoint}.
 
 \begin{algorithm}[htbp]
-  \caption{Estimation of Fundamental Matrix}
-  \label{alg:fundamenal-matrix}
+  \caption{Estimation of the Fundamental Matrix}
+  \label{alg:fundamental-matrix}
   \begin{algorithmic}[1]
-    \Require \(I_i\) and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
-    \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix of \(I_i\)
-    \State \label{line:fundamental-matrix-normalization-parameters} \(\bar{\mathbf u}_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}; \quad d_i \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
-    \State \label{line:fundamental-matrix-normalize-points} \(\mathbf{T}_i \gets \begin{bmatrix}
+    \Require Correspondences \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij} \mid j = 1, \dots, N\}\) for each seed image \(i \in \{a, b\}\)
+    \Ensure Estimated fundamental matrix \(\mathbf F\) for \(I_a\) and \(I_b\)
+    \State \label{line:fundamental-matrix-normalization-parameters} For each \(i \in \{a,b\}\), compute \(\bar{\mathbf u}_i = (\bar u_i,\bar v_i)^\top = \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}\), \(d_i = \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2\), and \(s_i = \frac{\sqrt{2}}{d_i}\)
+    \State \label{line:fundamental-matrix-normalize-points} For each \(i \in \{a,b\}\), set \(\mathbf{T}_i = \begin{bmatrix}
 s_i & 0 & -s_i\bar u_i\\
 0 & s_i & -s_i\bar v_i\\
 0 & 0 & 1
-\end{bmatrix}; \quad \mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top \gets \mathbf{T}_i \tilde{\mathbf u}_{ij}\) \Comment{Normalize corresponding 2D points}
-    \State Construct matrix \(\mathbf{A}\) with \(\mathbf{A}_{j,:} = \begin{bmatrix}
+\end{bmatrix}\) and normalize the image points as \(\mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top = \mathbf{T}_i \tilde{\mathbf u}_{ij}\)
+    \State Construct \(\mathbf{A}\) with row \(\mathbf{A}_{j,:} = \begin{bmatrix}
 x_{aj}x_{bj} & x_{aj}y_{bj} & x_{aj} &
 y_{aj}x_{bj} & y_{aj}y_{bj} & y_{aj} &
 x_{bj} & y_{bj} & 1
 \end{bmatrix}\)
-    \State Use SVD to decompose \(\mathbf{A}\) as \(\mathbf{U} \mathbf{\Sigma} \mathbf{V}^\top\)
-    \State \(\mathbf f \gets \mathbf{V}_{:,9}; \quad \mathbf{F}_0=\operatorname{unvec}_{3\times3}(\mathbf f)\)
+    \State Compute the full SVD \(\mathbf{A} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top\)
+    \State \(\mathbf f \gets \mathbf{V}_{:,9}; \quad \mathbf{F}_0\gets\operatorname{unvec}_{3\times3}(\mathbf f)\) \Comment{Reshape column by column}
     \State Use SVD to decompose \(\mathbf{F}_0\) as \(\mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,\sigma_3) \mathbf{V}_{\mathbf{F}}^\top\) where \(\sigma_1\ge \sigma_2\ge \sigma_3\)
-    \State \(\hat{\mathbf{F}} = \mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,0) \mathbf{V}_{\mathbf{F}}^{\top}\) \Comment{Constraint that \(\operatorname{rank}(\mathbf{F}) = 2\)}
+    \State \(\hat{\mathbf{F}} = \mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,0) \mathbf{V}_{\mathbf{F}}^{\top}\) \Comment{Enforce rank two}
     \State \(\mathbf{F} \gets \mathbf{T}_b^\top \hat{\mathbf{F}} \mathbf{T}_a\)
     \State \Return \(\mathbf{F}\)
   \end{algorithmic}
@@ -105,16 +105,16 @@ x_{bj} & y_{bj} & 1
 
 \subsection{Triangulation with Seed Images}
 
-Algorithm \ref{alg:triangulation-seed} demonstrates how the pipeline estimates a target 3D point's coordinate based on corresponding 2D points' positions and estimated projective matrices of the seed images.
+Algorithm~\ref{alg:triangulation-seed} uses linear triangulation to estimate each 3D point from its 2D observations and the estimated projection matrices of the seed images~\cite[Sec.~12.2]{hartley2004mvg}.
 
 \begin{algorithm}[htbp]
   \caption{Triangulation with Seed Images}
   \label{alg:triangulation-seed}
   \begin{algorithmic}[1]
-    \Require \(j = 1, \dots, N\) as the target 3D point's index, and \(\mathbf{P}_i\) and \(\{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}\)
-    \Ensure \(\mathbf{X}_j\) as the estimated coordinates of the target 3D point
-    \State Denote \(
-\mathbf P_i \gets
+    \Require Point index \(j \in \{1, \dots, N\}\), with \(\mathbf P_i\) and \(\tilde{\mathbf u}_{ij}\) for \(i \in \{a, b\}\)
+    \Ensure Estimated homogeneous coordinates \(\mathbf X_j\) of the 3D point
+    \State Write the rows of each camera matrix as \(
+\mathbf P_i =
 \begin{bmatrix}
 p_{i,11} & p_{i,12} & p_{i,13} & p_{i,14} \\
 p_{i,21} & p_{i,22} & p_{i,23} & p_{i,24} \\
@@ -136,70 +136,76 @@ v_{bj}\,\mathbf r_{b,3} - \mathbf r_{b,2} \\
 \mathbf r_{b,1} - u_{bj}\,\mathbf r_{b,3}
 \end{bmatrix}.
 \)
-    \State Use SVD to decompose \( \mathbf B_j \) as \(\mathbf{U}_j \mathbf{\Sigma}_j \mathbf{V}_j^\top\)
-    \State \Return \(\mathbf{X}_j \gets (\mathbf V_j)_{:,4}\)
+    \State Compute the SVD \(\mathbf B_j = \mathbf{U}_j\boldsymbol{\Sigma}_j\mathbf{V}_j^\top\)
+    \State \Return \(\mathbf{X}_j = (\mathbf V_j)_{:,4}\)
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Estimation of Projective Matrix of a Non-seed Image}
+\subsection{Estimation of the Projection Matrix for a Non-seed Image}
 
-If image \(I \in \mathcal{I} \setminus \{I_a, I_b\}\), then it is define as a non-seed image. Algorithm \ref{alg:projective-matrix-nonseed} shows how to estimate a non-seed image's projective matrix.
+For each non-seed image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\), Algorithm~\ref{alg:projective-matrix-nonseed} estimates its camera projection matrix using the direct linear transformation (DLT)~\cite[Sec.~7.1]{hartley2004mvg}, following the projective reconstruction procedure of Hartley~\cite[Sec.~6]{hartley1994euclidean}.
 
 \begin{algorithm}[htbp]
-  \caption{Estimation of Projective Matrix of a Non-seed Image}
+  \caption{Estimation of the Projection Matrix for a Non-seed Image}
   \label{alg:projective-matrix-nonseed}
   \begin{algorithmic}[1]
-    \Require \(i = 1, \dots, M\) as the target image's index, \(\mathcal{X}\) as the set of estiamted 3D points' coordinates by the seed image pair, and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij} \mid j = 1, \dots, N\}\) as the set of corresponding 2D points in the target image
-    \Ensure \(\mathbf{P}_i\) as the estimated projective matrix of the target image
-    \State Apply Line \ref{line:fundamental-matrix-normalization-parameters}-\ref{line:fundamental-matrix-normalize-points} of Algorithm \ref{alg:fundamenal-matrix} to normalize corresponding points' positions in \(\mathcal{U}_i\); record the normalized positions \(\mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top\) and matrix \(\mathbf{T}_i\)
-    \State \(\mathbf c_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf X_j; \quad
-d_{\mathbf{X}} \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf X_j-\mathbf c_i\|_2; \quad
+    \Require Non-seed image index \(i\), triangulated 3D points \(\mathcal{X}\), and their observations \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij} \mid j = 1, \dots, N\}\) in image \(I_i\)
+    \Ensure Estimated camera projection matrix \(\mathbf P_i\) for \(I_i\)
+    \State Normalize \(\mathcal{U}_i\) as in lines~\ref{line:fundamental-matrix-normalization-parameters}--\ref{line:fundamental-matrix-normalize-points} of Algorithm~\ref{alg:fundamental-matrix} to obtain \(\mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top\) and \(\mathbf{T}_i\)
+    \State Set \(\mathbf z_j = (\mathbf X_j)_{1:3}/(\mathbf X_j)_4\) and compute
+    \(\mathbf c \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf z_j; \quad
+d_{\mathbf{X}} \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf z_j-\mathbf c\|_2; \quad
 s_{\mathbf{X}} \gets \frac{\sqrt{3}}{d_{\mathbf{X}}}\)
-    \State \(S_i=\begin{bmatrix}
-s_{\mathbf{X}} I_3 & -s_{\mathbf{X}} \mathbf c_i\\
+    \State \(\mathbf S=\begin{bmatrix}
+s_{\mathbf{X}} \mathbf I_3 & -s_{\mathbf{X}} \mathbf c\\
 \mathbf 0^\top & 1
-\end{bmatrix}, \quad \mathbf Y_j \in \mathbb{R}^4 \sim S_i\tilde{\mathbf X}_j\) where the last item of \(\mathbf Y_j\) is \(1\)
-    \State Construct \(\mathbf A_i \in \mathbb R^{2N \times 12}\) where \((A_i)_{2j-1:2j,:} = \begin{bmatrix}
+\end{bmatrix}, \quad \mathbf Y_j = \mathbf S\begin{bmatrix}\mathbf z_j \\ 1\end{bmatrix}\)
+    \State Construct \(\mathbf A_i \in \mathbb R^{2N \times 12}\) with \((\mathbf A_i)_{2j-1:2j,:} = \begin{bmatrix}
 \mathbf Y_j^\top & \mathbf 0^\top & -x_{ij}\mathbf Y_j^\top\\
 \mathbf 0^\top & \mathbf Y_j^\top & -y_{ij}\mathbf Y_j^\top
 \end{bmatrix}\)
-    \State Apply SVD to decompose \(\mathbf A_i\) as \(\mathbf U \mathbf \Sigma \mathbf V^\top\)
+    \State Compute the SVD \(\mathbf A_i = \mathbf U\boldsymbol{\Sigma}\mathbf V^\top\)
     \State \(\mathbf p \gets \mathbf V_{:,12}, \quad
 \hat{\mathbf P}_i=\begin{bmatrix}
 (\mathbf p)_{1:4}^\top\\
 (\mathbf p)_{5:8}^\top\\
 (\mathbf p)_{9:12}^\top
 \end{bmatrix}\)
-    \State \Return \(\mathbf{P}_i \gets \mathbf T_i^{-1} \hat{\mathbf P}_i \mathbf S_i\)
+    \State \Return \(\mathbf{P}_i = \mathbf T_i^{-1} \hat{\mathbf P}_i \mathbf S\)
   \end{algorithmic}
 \end{algorithm}
 
 \subsection{Bundle Adjustment}
 \label{sec:bundle-adjustment}
 
-Bundle adjustment is used to adjust the estimated projective matrices of images and estimated coordinates of 3D points. Define \([K] = \{1, \dots, K\}, K \in \mathbb{N}_{+}\). Define \(\Omega = [M] \times [N]\). For a vector \(\mathbf q = (q_1, q_2, q_3)^\top, q_3 \neq 0\), define an operator \(\pi(\mathbf q)\) as
+Bundle adjustment jointly refines the estimated camera projection matrices and 3D point coordinates by minimizing reprojection error~\cite{triggs2000bundle}. Let \([K] = \{1, \dots, K\}\) for \(K \in \mathbb{N}_{+}\) and let \(\Omega = [M] \times [N]\). For a vector \(\mathbf q = (q_1, q_2, q_3)^\top\) with \(q_3 \neq 0\), define
 \begin{equation}\label{eq:pi}
   \pi(\mathbf q) = \begin{pmatrix} q_1/q_3\\ q_2/q_3 \end{pmatrix}.
 \end{equation}
-Choose \(5\) of 3D points to define a projective frame. Collect the chosen points' indices into the set \(\mathcal{J}_{\text{ref}}\). Denote the given estimated homogeneous coordinates of the \(j\)th 3D point as \(\mathbf{X}_j^\text{init}, j \in [N]\). Denote the given estimated projective matrix of image \(i\) as \(\mathbf P_i^\text{init}, i \in [M]\). For each of such matrices, select a non-zero entry from \(\mathbf P_i^\text{init}\) and get its position \((r_i, c_i)\). Initialize the matrix as
+Let \(\mathbf X_j^\text{init}\) and \(\mathbf P_i^\text{init}\) denote the initial estimates of the homogeneous coordinates of point \(j\) and the projection matrix of image \(i\), respectively. Choose five 3D points to define a projective frame~\cite{mohr1994projective} and denote their index set by \(\mathcal{J}_{\text{ref}}\). For any four distinct indices \(j_1,j_2,j_3,j_4\) in \(\mathcal{J}_{\text{ref}}\), the frame satisfies
 \begin{equation}
-  \mathbf P_i^0 \gets\frac{\mathbf P_i^\text{init}}{(\mathbf P_i^\text{init})_{r_i,c_i}}
+  \det\!\begin{bmatrix}
+    \mathbf X_{j_1}^\text{init} & \mathbf X_{j_2}^\text{init} & \mathbf X_{j_3}^\text{init} & \mathbf X_{j_4}^\text{init}
+  \end{bmatrix} \ne 0.
 \end{equation}
-For 3D points with indices \(j \in [N] \setminus \mathcal{J}_{\text{ref}}\), select a non-zero entry from \(\mathbf{X}_j^\text{init}\) and denote the entry's index as \(k_j\). Initialize each point's coordinate as
+For each \(i \in [M]\), select a nonzero entry of \(\mathbf P_i^\text{init}\) at position \((r_i, c_i)\) and initialize the matrix as
 \begin{equation}
-  \mathbf X_j^0 \gets \frac{\mathbf X_j^\text{init}}{(\mathbf X_j^\text{init})_{k_j}}
+  \mathbf P_i^0 = \frac{\mathbf P_i^\text{init}}{(\mathbf P_i^\text{init})_{r_i,c_i}}.
 \end{equation}
-In this way, the adjustment is modeled as the following optimization problem:
+For each \(j \in [N] \setminus \mathcal{J}_{\text{ref}}\), select a nonzero entry of \(\mathbf X_j^\text{init}\) at index \(k_j\). Initialize the point coordinates as
+\begin{equation}
+  \begin{aligned}
+    \mathbf X_j^0 &= \mathbf X_j^\text{init}, \quad j \in \mathcal{J}_{\text{ref}}, \\
+    \mathbf X_j^0 &= \frac{\mathbf X_j^\text{init}}{(\mathbf X_j^\text{init})_{k_j}}, \quad j \in [N] \setminus \mathcal{J}_{\text{ref}}.
+  \end{aligned}
+\end{equation}
+Bundle adjustment solves the following optimization problem.
 \begin{equation}\label{eq:bundle-adjustment}
   \begin{aligned}
-    \min_{\mathbf P_i,\mathbf X_j} &\sum_{(i,j)\in\Omega} \left\|\tilde{\mathbf u}_{ij}-\pi\!\left(\mathbf P_i \mathbf X_j\right)\right\|_2^2 \\
-    \text{s.t.} \quad &\det\!\begin{bmatrix}
-  \mathbf X_{j_1}^0 & \mathbf X_{j_2}^0 & \mathbf X_{j_3}^0 & \mathbf X_{j_4}^0
-  \end{bmatrix}\ne 0,\quad
-  \forall\,j_1<j_2<j_3<j_4, \quad j_1, j_2, j_3, j_4 \in [N] \\
-  & \mathbf{X}_j = \mathbf{X}_j^\text{init}, \quad j \in \mathcal{J}_{\text{ref}} \\
-  & \left(\mathbf P_i\right)_{r_i, c_i} = 1, \quad \forall i \in [M] \\
-  & \left(\mathbf{X}_j\right)_{k_j} = 1, \quad \forall j \in [N] \setminus \mathcal{J}_{\text{ref}}
+    \min_{\{\mathbf P_i\}_{i\in[M]},\,\{\mathbf X_j\}_{j\in[N]}} &\sum_{(i,j)\in\Omega} \left\|\mathbf u_{ij}-\pi\!\left(\mathbf P_i \mathbf X_j\right)\right\|_2^2 \\
+    \text{s.t.} \quad & \mathbf X_j = \mathbf X_j^\text{init}, \quad j \in \mathcal{J}_{\text{ref}}, \\
+  & (\mathbf P_i)_{r_i,c_i} = 1, \quad i \in [M], \\
+  & (\mathbf X_j)_{k_j} = 1, \quad j \in [N] \setminus \mathcal{J}_{\text{ref}}.
   \end{aligned}
 \end{equation}
 
@@ -220,11 +226,10 @@ OpenAI Codex was used to:
 
 \begin{enumerate}
   \item create the LaTeX report template;
-  \item check and correct the format of in-text citations and the reference list
+  \item add in-text citations and verify the citation and reference-list formatting;
+  \item check and correct mathematical notation, formula consistency, spelling, and grammar in the Methodology section.
 \end{enumerate}
 
-% Include the bibliography entries until the in-text citations are added.
-\nocite{opensfm,schonberger2016sfm,hartley2004mvg,hartley1997eightpoint,triggs2000bundle,hartley1994euclidean,mohr1994projective}
 \bibliographystyle{unsrt}
 \bibliography{references}
 
