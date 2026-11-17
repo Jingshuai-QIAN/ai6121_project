@@ -105,7 +105,7 @@ x_{bj} & y_{bj} & 1
 
 \subsection{Triangulation with Seed Images}
 
-Algorithm~\ref{alg:triangulation-seed} uses linear triangulation to estimate each 3D point from its 2D observations and the estimated projection matrices of the seed images~\cite[Sec.~12.2]{hartley2004mvg}.
+Algorithm~\ref{alg:triangulation-seed} applies linear triangulation to estimate each 3D point from its 2D observations and projection matrices of the seed images~\cite[Sec.~12.2]{hartley2004mvg}.
 
 \begin{algorithm}[htbp]
   \caption{Triangulation with Seed Images}
@@ -143,7 +143,7 @@ v_{bj}\,\mathbf r_{b,3} - \mathbf r_{b,2} \\
 
 \subsection{Estimation of the Projection Matrix for a Non-seed Image}
 
-For each non-seed image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\), Algorithm~\ref{alg:projective-matrix-nonseed} estimates its camera projection matrix using the direct linear transformation (DLT)~\cite[Sec.~7.1]{hartley2004mvg}, following the projective reconstruction procedure of Hartley~\cite[Sec.~6]{hartley1994euclidean}.
+For each non-seed image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\), Algorithm~\ref{alg:projective-matrix-nonseed} estimates its projection matrix using the direct linear transformation (DLT)~\cite[Sec.~7.1]{hartley2004mvg}, following the projective reconstruction procedure of Hartley~\cite[Sec.~6]{hartley1994euclidean}.
 
 \begin{algorithm}[htbp]
   \caption{Estimation of the Projection Matrix for a Non-seed Image}
@@ -178,11 +178,11 @@ s_{\mathbf{X}} \mathbf I_3 & -s_{\mathbf{X}} \mathbf c\\
 \subsection{Bundle Adjustment}
 \label{sec:bundle-adjustment}
 
-Bundle adjustment jointly refines the estimated camera projection matrices and 3D point coordinates by minimizing reprojection error~\cite{triggs2000bundle}. Let \([K] = \{1, \dots, K\}\) for \(K \in \mathbb{N}_{+}\) and let \(\Omega = [M] \times [N]\). For a vector \(\mathbf q = (q_1, q_2, q_3)^\top\) with \(q_3 \neq 0\), define
+Bundle adjustment refines the estimated camera projection matrices and 3D point coordinates by minimizing reprojection error~\cite{triggs2000bundle}. Let \([K] = \{1, \dots, K\}\) for \(K \in \mathbb{N}_{+}\) and let \(\Omega = [M] \times [N]\). For a vector \(\mathbf q = (q_1, q_2, q_3)^\top\) with \(q_3 \neq 0\), define
 \begin{equation}\label{eq:pi}
   \pi(\mathbf q) = \begin{pmatrix} q_1/q_3\\ q_2/q_3 \end{pmatrix}.
 \end{equation}
-Let \(\mathbf X_j^\text{init}\) and \(\mathbf P_i^\text{init}\) denote the initial estimates of the homogeneous coordinates of point \(j\) and the projection matrix of image \(i\), respectively. Choose five 3D points to define a projective frame~\cite{mohr1994projective} and denote their index set by \(\mathcal{J}_{\text{ref}}\). For any four distinct indices \(j_1,j_2,j_3,j_4\) in \(\mathcal{J}_{\text{ref}}\), the frame satisfies
+Let \(\mathbf X_j^\text{init}\) and \(\mathbf P_i^\text{init}\) denote the initial estimates of the homogeneous coordinates of 3D point \(j\) and the projection matrix of image \(i\), respectively. Choose five 3D points to define a projective frame~\cite{mohr1994projective} and denote their index set by \(\mathcal{J}_{\text{ref}}\). For any four distinct indices \(j_1,j_2,j_3,j_4\) in \(\mathcal{J}_{\text{ref}}\), the frame satisfies
 \begin{equation}
   \det\!\begin{bmatrix}
     \mathbf X_{j_1}^\text{init} & \mathbf X_{j_2}^\text{init} & \mathbf X_{j_3}^\text{init} & \mathbf X_{j_4}^\text{init}
@@ -199,7 +199,7 @@ For each \(j \in [N] \setminus \mathcal{J}_{\text{ref}}\), select a nonzero entr
     \mathbf X_j^0 &= \frac{\mathbf X_j^\text{init}}{(\mathbf X_j^\text{init})_{k_j}}, \quad j \in [N] \setminus \mathcal{J}_{\text{ref}}.
   \end{aligned}
 \end{equation}
-Bundle adjustment solves the following optimization problem.
+In this way, bundle adjustment solves the following optimization problem.
 \begin{equation}\label{eq:bundle-adjustment}
   \begin{aligned}
     \min_{\{\mathbf P_i\}_{i\in[M]},\,\{\mathbf X_j\}_{j\in[N]}} &\sum_{(i,j)\in\Omega} \left\|\mathbf u_{ij}-\pi\!\left(\mathbf P_i \mathbf X_j\right)\right\|_2^2 \\
@@ -213,9 +213,9 @@ Bundle adjustment solves the following optimization problem.
 \label{sec:experiments}
 % How to conduct experiments, e.g. settings, expected results
 
-The experiment calls for \(M = 25\) photographs of Double Helix taken from different viewpoints. In each image \(I_i\), we record the 2D pixel coordinates \(\mathbf u_{ij}\) of the same \(N = 8\) landmarks. The landmark index \(j\) links corresponding observations across images.
+The experiment uses \(M = 25\) images of Double Helix taken from different viewpoints. In each image \(I_i, i = \{1, \dots, M\}\), the project records the 2D pixel coordinates \(\mathbf u_{ij}, j = 1, \dots, N\) of the same \(N = 8\) landmarks. The landmark index \(j\) links corresponding observations across images.
 
-The SfM pipeline described in Section~\ref{sec:methodology} takes the images and their 2D observations as input and estimates the camera projection matrices \(\mathbf P_i\) and the homogeneous 3D point coordinates \(\mathbf X_j\). The estimated points form a sparse projective reconstruction. We assess the spatial arrangement of the reconstructed landmarks qualitatively by inspecting the point cloud from different viewpoints and comparing it with the input photographs.
+The SfM pipeline described in Section~\ref{sec:methodology} takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The estimated points form a sparse reconstruction. The project assesses the spatial arrangement of the reconstructed landmarks qualitatively by inspecting the point cloud from different viewpoints and comparing it with the input images.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -230,7 +230,7 @@ OpenAI Codex was used to:
 
 \begin{enumerate}
   \item create the LaTeX report template;
-  \item add in-text citations and verify the citation and reference-list formatting;
+  \item verify the citation and reference-list formatting;
   \item check and correct mathematical notation, formula consistency, spelling, and grammar of the report.
 \end{enumerate}
 
