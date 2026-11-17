@@ -3,6 +3,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage{amsmath}
 \usepackage[margin=25mm]{geometry}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -35,10 +36,6 @@
     % Replace the placeholder and add one row for each additional group member.
     [Full name] & [Matriculation number] \\
   \end{tabular}\par
-
-  \vspace{3em}
-  {\small\textbf{Generative AI disclosure.}
-    OpenAI Codex was used to create the LaTeX report template and prepare the reference list.\par}
   \vspace*{\fill}
 \end{titlepage}
 
@@ -51,7 +48,7 @@
 \subsection{Overall Review of SfM}
 \label{sec:overall-sfm}
 
-Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) pipeline applied by this project. The pipeline requires \(M\) images of the target scene and positions of corresponding 2D points of \(N\) target 3D points for reconstruction. The images are stored in a set \(\mathcal{I} = \{ I_i \mid i = 1, 2, 3, \dots, M \}\) where \(I_i\) is the image with index \(i\). For the \(j\)th target 3D point, its corresponding 2D point's position in image \(I_i\) is denoted as \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). All 2D point's positions are stored in a set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M; j = 1, \dots, N \}\). The pipeline outputs: (1) the set of estimated projective matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) where \(\mathbf{P}_i\) is the projective matrix of image \(I_i\); and (2) the set of estimated coordinates of 3D target points \(\mathcal{X} = \{ \mathbf{x}_j \mid j = 1, \dots, N \}\) where \(\mathbf{x}_j\) is the \(j\)th target 3D point's coordinate.
+Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) pipeline applied by this project. The pipeline requires \(M \geq 2\) images of the target scene and positions of corresponding 2D points of \(N \geq 8\) target 3D points for reconstruction. The images are stored in a set \(\mathcal{I} = \{ I_i \mid i = 1, 2, 3, \dots, M \}\) where \(I_i\) is the image with index \(i\). For the \(j\)th target 3D point, its corresponding 2D point's position in image \(I_i\) is denoted as \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). All 2D point's positions are stored in a set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M; j = 1, \dots, N \}\). The pipeline outputs: (1) the set of estimated projective matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) where \(\mathbf{P}_i\) is the projective matrix of image \(I_i\); and (2) the set of estimated coordinates of 3D target points \(\mathcal{X} = \{ \mathbf{x}_j \mid j = 1, \dots, N \}\) where \(\mathbf{x}_j\) is the \(j\)th target 3D point's coordinate.
 
 
 \begin{algorithm}[htbp]
@@ -60,9 +57,38 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
   \begin{algorithmic}[1]
     \Require \(\mathcal{I}\) as the set of images, and \(\mathcal{U}\) as the set of 2D point's positions in images
     \Ensure \(\mathcal{P}\) as the set of estimated projective matrices, and \(\mathcal{X}\) as the set of estimated coordinates of 3D target points
-    \State $Y \gets \Call{Process}{X}$ \Comment{Describe this step}
-    \Statex \Comment{Add a standalone comment}
-    \State \Return $Y$
+    \State Pick seed images \(I_a, I_b\) where \(a, b \in \{ 1, \dots, M \}\)
+    \State Pick corresponding 2D points' positions into a set \(\mathcal{U}_s = \{ \tilde{\mathbf u}_{ij} \mid i \in \{a, b\}; j = 1, \dots, N \}\)
+    \State Estimate fundamental matrices of \(I_a, I_b\) as \(\mathbf{F}_a, \mathbf{F}_b\) using Algorithm \ref{alg:fundamenal-matrix}
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Fundamental Matrix Estimation}
+
+Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the fundamental matrix of each seed image.
+
+\begin{algorithm}[htbp]
+  \caption{Fundamental Matrix Estimation}
+  \label{alg:fundamenal-matrix}
+  \begin{algorithmic}[1]
+    \Require \(I_a, I_b\) as seed images where \(a, b \in \{ 1, \dots, M \}\), and \(\mathcal{U}_s\) as the set of positions of corresponding 2D points in seed images
+    \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix respectively of seed image \(I_i, i \in \{a, b\}\)
+    \State \(\bar{\mathbf u}_i \gets \frac{1}{m}\sum_{j=1}^{m}\mathbf u_{ij}; \quad d_i \gets \frac{1}{m}\sum_{j=1}^{m}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
+    \State \(\mathbf{T}_i \gets \begin{bmatrix}
+s_i & 0 & -s_i\bar u_i\\
+0 & s_i & -s_i\bar v_i\\
+0 & 0 & 1
+\end{bmatrix}; \quad \mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top \gets \mathbf{T}_i \tilde{\mathbf u}_{ij}\) \Comment{Normalize corresponding 2D points}
+    \State Construct matrix \(\mathbf{A}\) with \(\mathbf{A}_{j,:} = \begin{bmatrix}
+x_{aj}x_{bj} & x_{aj}y_{bj} & x_{aj} &
+y_{aj}x_{bj} & y_{aj}y_{bj} & y_{aj} &
+x_{bj} & y_{bj} & 1
+\end{bmatrix}\)
+    \State Use SVD to decompose \(\mathbf{A}\) as \(\mathbf{U} \mathbf{\Sigma} \mathbf{V}^\top\)
+    \State \(\mathbf f \gets \mathbf{V}_{:,9}; \quad \mathbf{F}_0=\operatorname{unvec}_{3\times3}(\mathbf f)\)
+    \State Use SVD to decompose \(\mathbf{F}_0\) as \(\mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,\sigma_3) \mathbf{V}_{\mathbf{F}}^\top\) where \(\sigma_1\ge \sigma_2\ge \sigma_3\)
+    \State \(\hat{\mathbf{F}} = \mathbf{U}_{\mathbf{F}} \operatorname{diag}(\sigma_1,\sigma_2,0) \mathbf{V}_{\mathbf{F}}^{\top}\) \Comment{Constraint that \(\operatorname{rank}(\mathbf{F}) = 2\)}
+    \State \(\mathbf{F} \gets \mathbf{T}_b^\top \hat{\mathbf{F}} \mathbf{T}_a\)
   \end{algorithmic}
 \end{algorithm}
 
@@ -76,6 +102,15 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+\section{Generative AI disclosure}
+
+OpenAI Codex was used to:
+
+\begin{enumerate}
+  \item create the LaTeX report template;
+  \item check and correct the format of in-text citations and the reference list
+\end{enumerate}
 
 % Include the bibliography entries until the in-text citations are added.
 \nocite{opensfm,schonberger2016sfm,hartley2004mvg,hartley1997eightpoint,triggs2000bundle,hartley1994euclidean,mohr1994projective}
