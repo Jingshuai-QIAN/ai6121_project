@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage[margin=25mm]{geometry}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -60,19 +61,24 @@ Algorithm \ref{alg:sfm} is an overall review of the Structure-from-Motion (SfM) 
     \State Pick seed images \(I_a, I_b\) where \(a, b \in \{ 1, \dots, M \}\)
     \State Estimate the fundamental matrix \(I_a, I_b\) as \(\mathbf{F}\) using Algorithm \ref{alg:fundamenal-matrix}
     \State Solve \(\mathbf e_b\) from \(F^\top\mathbf e_b = 0, \|\mathbf e_b\|_2 = 1\)
-    \State \(\mathbf{P}_a \gets [\mathbf{I} \mid \mathbf 0]; \quad \mathbf{P}_b \gets [-[\mathbf e_b]_\times \mathbf F \mid \mathbf e_b]\)
+    \State \(\mathbf{P}_a \gets [\mathbf{I} \mid \mathbf 0]; \quad \mathbf{P}_b \gets [-[\mathbf e_b]_\times \mathbf F \mid \mathbf e_b]; \quad \mathcal{P} \gets \{\mathbf{P}_a, \mathbf{P}_b\}\)
+    \State Estimate target 3D points' coordinates \(\mathbf X_j, j = 1, \dots, N\) with information about seed images using Algorithm \ref{alg:triangulation-seed}
+    \State \(\mathcal{X} \gets \{ \mathbf X_j \mid j = 1, \dots, N \}\)
+    \For{image \(I_i \in \mathcal{I} \setminus \{I_a, I_b\}\)}
+      \State Estimate projective matrix \(\mathbf P_i\) of the current image using Algorithm \ref{alg:projective-matrix-nonseed}
+    \EndFor
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Fundamental Matrix Estimation}
+\subsection{Estimation of Fundamental Matrix}
 
 Algorithm \ref{alg:fundamenal-matrix} shows how the SfM pipeline estimates the fundamental matrix of a pair of seed images.
 
 \begin{algorithm}[htbp]
-  \caption{Fundamental Matrix Estimation}
+  \caption{Estimation of Fundamental Matrix}
   \label{alg:fundamenal-matrix}
   \begin{algorithmic}[1]
-    \Require \(I_i \in \mathcal{I}\) and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
+    \Require \(I_i\) and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
     \Ensure \(\mathbf{F}_i\) as the estimated fundamental matrix of \(I_i\)
     \State \label{line:fundamental-matrix-normalization-parameters} \(\bar{\mathbf u}_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf u_{ij}; \quad d_i \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf u_{ij}-\bar{\mathbf u}_i\|_2; \quad s_i \gets \frac{\sqrt{2}}{d_i}\)
     \State \label{line:fundamental-matrix-normalize-points} \(\mathbf{T}_i \gets \begin{bmatrix}
@@ -96,15 +102,72 @@ x_{bj} & y_{bj} & 1
 
 \subsection{Triangulation with Seed Images}
 
-Algorithm \ref{alg:triangulation-seed} demonstrates how the pipeline estimates target 3D points' coordinates based on 2D points' positions and estimated projective matrices of the seed images.
+Algorithm \ref{alg:triangulation-seed} demonstrates how the pipeline estimates a target 3D point's coordinate based on corresponding 2D points' positions and estimated projective matrices of the seed images.
 
 \begin{algorithm}[htbp]
   \caption{Triangulation with Seed Images}
   \label{alg:triangulation-seed}
   \begin{algorithmic}[1]
-    \Require \(\mathbf{P}_i\) and \(\{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}, j \in \{1, \dots, N\}\)
-    \Ensure \(\mathbf{X}_j, j = 1, \dots, N\) as the estimated coordinates of target 3D points
-    \State
+    \Require \(j = 1, \dots, N\) as the target 3D point's index, and \(\mathbf{P}_i\) and \(\{\tilde{\mathbf u}_{ij}\}\) where \(i \in \{a, b\}\)
+    \Ensure \(\mathbf{X}_j\) as the estimated coordinates of the target 3D point
+    \State Denote \(
+\mathbf P_i \gets
+\begin{bmatrix}
+p_{i,11} & p_{i,12} & p_{i,13} & p_{i,14} \\
+p_{i,21} & p_{i,22} & p_{i,23} & p_{i,24} \\
+p_{i,31} & p_{i,32} & p_{i,33} & p_{i,34}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf r_{i,1} \\
+\mathbf r_{i,2} \\
+\mathbf r_{i,3}
+\end{bmatrix}.
+\)
+    \State Construct \(
+\mathbf B_j =
+\begin{bmatrix}
+v_{aj}\,\mathbf r_{a,3} - \mathbf r_{a,2} \\
+\mathbf r_{a,1} - u_{aj}\,\mathbf r_{a,3} \\
+v_{bj}\,\mathbf r_{b,3} - \mathbf r_{b,2} \\
+\mathbf r_{b,1} - u_{bj}\,\mathbf r_{b,3}
+\end{bmatrix}.
+\)
+    \State Use SVD to decompose \( \mathbf B_j \) as \(\mathbf{U}_j \mathbf{\Sigma}_j \mathbf{V}_j^\top\)
+    \State \Return \(\mathbf{X}_j \gets (\mathbf V_j)_{:,4}\)
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Estimation of Projective Matrix of a Non-seed Image}
+
+If image \(I \in \mathcal{I} \setminus \{I_a, I_b\}\), then it is define as a non-seed image. Algorithm \ref{alg:projective-matrix-nonseed} shows how to estimate a non-seed image's projective matrix.
+
+\begin{algorithm}[htbp]
+  \caption{Estimation of Projective Matrix of a Non-seed Image}
+  \label{alg:projective-matrix-nonseed}
+  \begin{algorithmic}[1]
+    \Require \(i = 1, \dots, M\) as the target image's index, \(\mathcal{X}\) as the set of estiamted 3D points' coordinates by the seed image pair, and \(\mathcal{U}_i = \{\tilde{\mathbf u}_{ij} \mid j = 1, \dots, N\}\) as the set of corresponding 2D points in the target image
+    \Ensure \(\mathbf{P}_i\) as the estimated projective matrix of the target image
+    \State Apply Line \ref{line:fundamental-matrix-normalization-parameters}-\ref{line:fundamental-matrix-normalize-points} of Algorithm \ref{alg:fundamenal-matrix} to normalize corresponding points' positions in \(\mathcal{U}_i\); record the normalized positions \(\mathbf{x}_{ij} = (x_{ij},y_{ij},1)^\top\) and matrix \(\mathbf{T}_i\)
+    \State \(\mathbf c_i \gets \frac{1}{N}\sum_{j=1}^{N}\mathbf X_j; \quad
+d_{\mathbf{X}} \gets \frac{1}{N}\sum_{j=1}^{N}\|\mathbf X_j-\mathbf c_i\|_2; \quad
+s_{\mathbf{X}} \gets \frac{\sqrt{3}}{d_{\mathbf{X}}}\)
+    \State \(S_i=\begin{bmatrix}
+s_{\mathbf{X}} I_3 & -s_{\mathbf{X}} \mathbf c_i\\
+\mathbf 0^\top & 1
+\end{bmatrix}, \quad \mathbf Y_j \in \mathbb{R}^4 \sim S_i\tilde{\mathbf X}_j\) where the last item of \(\mathbf Y_j\) is \(1\)
+    \State Construct \(\mathbf A_i \in \mathbb R^{2N \times 12}\) where \((A_i)_{2j-1:2j,:} = \begin{bmatrix}
+\mathbf Y_j^\top & \mathbf 0^\top & -x_{ij}\mathbf Y_j^\top\\
+\mathbf 0^\top & \mathbf Y_j^\top & -y_{ij}\mathbf Y_j^\top
+\end{bmatrix}\)
+    \State Apply SVD to decompose \(\mathbf A_i\) as \(\mathbf U \mathbf \Sigma \mathbf V^\top\)
+    \State \(\mathbf p \gets \mathbf V_{:,12}, \quad
+\hat{\mathbf P}_i=\begin{bmatrix}
+(\mathbf p)_{1:4}^\top\\
+(\mathbf p)_{5:8}^\top\\
+(\mathbf p)_{9:12}^\top
+\end{bmatrix}\)
+    \State \Return \(\mathbf{P}_i \gets \mathbf T_i^{-1} \hat{\mathbf P}_i \mathbf S_i\)
   \end{algorithmic}
 \end{algorithm}
 
