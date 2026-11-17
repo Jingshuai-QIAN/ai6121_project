@@ -2,3 +2,5 @@
 /AGENTS.md
 /tmp/
 /report/build/
+__pycache__/
+/.venv/
