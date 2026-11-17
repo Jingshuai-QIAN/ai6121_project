@@ -6,7 +6,9 @@
 
 This AI6121 course project uses structure from motion (SfM) to reconstruct the 3D structure of an object we call Double Helix from multi-view photographs. [Video of Double Helix](data/video/double_helix.mp4)
 
-We plan to take 25 photographs of Double Helix and mark the same eight landmarks in every photograph.
+The selected approach (2026-11-18) is camera calibration, automatic SIFT matching, incremental sparse SfM, and bundle adjustment. Start with a small image set, then target approximately 25 clear images with overlap and translational parallax for the main experiment. The CPU implementation will use NumPy, OpenCV, and SciPy; PyTorch is not required.
+
+Before implementation, read the [architecture and interface design](docs/SFM_ARCHITECTURE.md) and [agent tasks and launch instructions](docs/SFM_AGENT_TASKS.md) (Chinese). The repository does not yet contain an SfM implementation. The eight-manual-landmark projective reconstruction in `report/main.tex` is an older design and must be updated to match the implementation.
 
 ## Project Structure
 

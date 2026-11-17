@@ -1,4 +1,6 @@
-/docs/
+/docs/*
+!/docs/SFM_ARCHITECTURE.md
+!/docs/SFM_AGENT_TASKS.md
 /AGENTS.md
 /tmp/
 /report/build/
