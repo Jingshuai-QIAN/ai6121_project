@@ -1,0 +1,7 @@
+# Extra packages for the learned matching frontend. Do not replace requirements.txt.
+# Install into the project virtualenv after the base requirements.
+# Official inference code and pretrained weights: https://github.com/cvg/LightGlue
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+kornia>=0.7.3
+lightglue @ git+https://github.com/cvg/LightGlue.git

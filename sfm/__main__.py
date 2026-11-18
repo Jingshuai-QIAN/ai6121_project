@@ -134,13 +134,17 @@ def run(args):
               flush=True)
         return 0
 
-    key = appearance_key(inputs, config)
+    key_extra = None
+    if args.frontend != "sift":
+        from .learned import cache_key
+        key_extra = cache_key(args.frontend)
+    key = appearance_key(inputs, config, key_extra)
     if args.reuse_appearance:
         stage = perf_counter()
         logger.info("[cache] Loading cached features and matches from %s", args.reuse_appearance)
         pairs = load_appearance(args.reuse_appearance, frames, key)
         elapsed["appearance_cache_load"] = perf_counter() - stage
-    else:
+    elif args.frontend == "sift":
         stage = perf_counter()
         logger.info("[SIFT] Extracting features in %d frames", len(frames))
         extract_features(frames, config)
@@ -164,6 +168,16 @@ def run(args):
                 logger.info("[match] %d/%d pairs checked, %d verified (%.1f s)",
                             done, total, verified, perf_counter() - stage)
         elapsed["matching_and_geometry"] = perf_counter() - stage
+        stage = perf_counter()
+        logger.info("[cache] Saving features and matches")
+        save_appearance(output, frames, pairs, key)
+        elapsed["appearance_cache_write"] = perf_counter() - stage
+    else:
+        from .learned import match_with_lightglue
+        logger.info("[frontend] %s on CUDA; geometry backend is unchanged", args.frontend)
+        pairs, info = match_with_lightglue(frames, config, args.frontend, rng)
+        elapsed.update(info.pop("elapsed"))
+        write_json(output / "frontend.json", info)
         stage = perf_counter()
         logger.info("[cache] Saving features and matches")
         save_appearance(output, frames, pairs, key)
@@ -208,6 +222,9 @@ def main():
     parser.add_argument("--focal-source", help="Provenance of --source-focal-px, including crop/mode")
     parser.add_argument("--reuse-appearance", type=Path, help="Load matching cache from a prior run")
     parser.add_argument("--fit-k1", action="store_true")
+    parser.add_argument("--frontend", choices=("sift", "sift_lightglue", "superpoint_lightglue"),
+                        default="sift",
+                        help="sift keeps the ratio-test matcher; the other two replace only matching")
     args = parser.parse_args()
     if (args.source_focal_px is None) != (args.focal_source is None):
         parser.error("--source-focal-px and --focal-source must be supplied together")

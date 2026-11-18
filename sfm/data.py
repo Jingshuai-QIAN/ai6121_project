@@ -229,16 +229,20 @@ def build_tracks(pairs):
     return [dict(sorted(group.items())) for _, group in sorted(groups.items())], conflicts
 
 
-def appearance_key(inputs, config):
+def appearance_key(inputs, config, extra=None):
     settings = ("seed", "features", "contrast", "grid_cell", "clahe_clip", "root_sift",
                 "ratio", "window", "loop_window", "sampson_px", "ransac_trials", "min_pair_inliers")
-    return {
+    key = {
         "video_sha256": inputs["sha256"], "frames": inputs["frames"],
         "settings": {key: config[key] for key in settings},
         "opencv": cv2.__version__, "numpy": np.__version__,
         "source": {name: sha256(Path(__file__).with_name(name))
                    for name in ("data.py", "geometry.py")},
     }
+    # Baseline caches omit this field. Learned frontends must not reuse a SIFT cache.
+    if extra:
+        key["frontend"] = extra
+    return key
 
 
 def save_appearance(output, frames, pairs, key):
