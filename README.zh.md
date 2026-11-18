@@ -4,9 +4,9 @@
 
 ## 项目简介
 
-本项目使用运动恢复结构（Structure from Motion，SfM）方法，从多视角照片重建「双螺旋」（Double Helix）的三维结构。[双螺旋视频](data/video/double_helix.mp4)
+本项目使用运动恢复结构（Structure from Motion，SfM）方法，从手持视频重建南洋理工大学 UOB Innovation Hub（原名 The Hive）临街一侧的稀疏三维结构。[原始视频](data/video/the_hive.mp4)
 
-小组计划为「双螺旋」拍摄 25 张不同视角的照片，并在每张照片中标注同一组 8 个地标。
+主实验从视频中均匀抽取 49 帧，并在不同视角之间自动匹配 SIFT 特征。[实验结果](report_reference/RESULTS.md)
 
 ## 项目结构
 
@@ -15,7 +15,7 @@
 ├── data/           # 项目数据
 │   ├── figures/    # 用于三维重建的照片
 │   ├── points/     # 照片之间的对应点
-│   └── video/      # 双螺旋视频
+│   └── video/      # 原始视频
 ├── report/         # LaTeX 报告源文件
 ├── .gitignore      # Git 忽略规则
 ├── README.md       # 英文项目说明

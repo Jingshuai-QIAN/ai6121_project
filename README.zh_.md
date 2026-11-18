@@ -1,12 +1,12 @@
-# AI6121 课程项目 · Double Helix 稀疏 SfM
+# AI6121 课程项目 · UOB Innovation Hub 稀疏 SfM
 
-从 [NTU Double Helix 视频](data/video/double_helix.mp4)自动匹配 SIFT，恢复彩色稀疏点云、相机姿态和共享内参。主实现位于 `feat/sift-calibrated-sfm`。`feat/manual-projective-sfm` 保存手工地标的射影几何基线。
+从南洋理工大学 UOB Innovation Hub（原名 The Hive）的原始视频中自动匹配 SIFT 特征，恢复彩色稀疏点云、相机姿态和共享内参。`feat/manual-projective-sfm` 分支保存手工地标的射影几何基线。[原始视频](data/video/the_hive.mp4)
 
 ## 运行
 
 在仓库根目录使用 Python 3.11。实测平台为 Linux CPU AMD64。
 
-执行以下命令会在`outputs/orbit_repro`下得到由 `data/video/double_helix.mp4` 的重建结果。
+以下命令将 UOB Innovation Hub 的重建结果写入 `outputs/hive_repro/`。
 
 `python -m sfm` 的详细参数说明见[docs/SFM_PARAMETERS.md](/docs/SFM_PARAMETERS.md)
 
@@ -40,11 +40,11 @@ python -m unittest discover -s tests -v
 ### 3. 视频检查和抽帧
 
 ```bash
-python -m sfm inspect --video data/video/double_helix.mp4 --output outputs/inspection_demo
+python -m sfm inspect --video data/video/the_hive.mp4 --output outputs/inspection_demo
 ```
 SfM 重建前的视频检查和抽帧。
 
-从 `data/video/double_helix.mp4` 默认均匀抽取 25 帧，并把结果写到 `outputs/inspection_demo/`。
+从 `data/video/the_hive.mp4` 默认均匀抽取 25 帧，并把结果写到 `outputs/inspection_demo/`。
 
 **产物不会用于重建**，仅供预览和核对：
 
@@ -55,34 +55,20 @@ SfM 重建前的视频检查和抽帧。
 
 ### 4. 重建
 ```bash
-python -m sfm reconstruct --video data/video/double_helix.mp4 \
-  --config configs/orbit49_balanced.json --output outputs/orbit_repro
+python -m sfm reconstruct --video data/video/the_hive.mp4 \
+  --config configs/orbit49_balanced.json --output outputs/hive_repro
 ```
-用 `data/video/double_helix.mp4` **重新跑一遍 Double Helix 主实验**，把新结果保存到 `outputs/orbit_repro/`。
 
 - `python -m sfm reconstruct` 启动完整重建流程，从抽帧、SIFT 匹配到相机注册、三角化和 Bundle Adjustment。
-- `--video data/video/double_helix.mp4` 指定输入视频。
+- `--video data/video/the_hive.mp4` 指定输入视频。
 - `--config configs/orbit49_balanced.json` 使用主实验配置，包括 **均匀抽取 49 帧**、按图像网格分配 SIFT 特征，以及用工作图像长边的 **0.65 倍**作为初始焦距。
-*注：默认的config效果不太好，建议使用 orbit49_balanced.json*
-- `--output outputs/orbit_repro` 指定新的输出目录。
+- `--output outputs/hive_repro` 指定新的输出目录。
 
 
 
-### 5. 结果审计
-```
-python -m sfm.audit outputs/orbit_repro --output outputs/orbit_repro/audit
-```
-复核重建结果里有多少点确实落在 **Double Helix** 的金属带上。它读取 `outputs/orbit_repro` 里已有的点云、相机和特征观测，再用仓库里的人工标注做事后检查。
+### 5. 查看结果
 
-判定规则：同一个三维点，在**至少两张有效图像**中，实际检测到的特征位置和三维点的重投影位置都落在标注的金属带内区，才计为一个有金属带支持的点。
-
-结果写到 `outputs/orbit_repro/audit/`，主要看：
-
-- `ribbon_audit.json`：通过检查的点数和对应视图。
-- `ribbon_support.jpg`：在输入帧上标出审计区域和通过检查的观测。
-- `ribbon_supported.ply`：从全场景点云中提取的金属带点子集。
-
-*主实验的点云里，有 399 个点能在至少两帧中对应到雕塑的金属带。*
+查看 `metrics.json` 中的注册视图数、场景点数和重投影误差。结合 `figures/scene_and_cameras.png` 和重投影叠图检查临街一侧的重建覆盖。[主实验结果](report_reference/RESULTS.md)
 
 ## 产物
 
@@ -90,8 +76,8 @@ python -m sfm.audit outputs/orbit_repro --output outputs/orbit_repro/audit
 - `tracks.json` 保存原始工作像素与活动标记，`reconstruction.npz` 保存可用 NumPy 读取的点、颜色、位姿和内参。
 - `metrics.json`、`events.jsonl`、`pairs.json`、`per_view.csv` 记录配对、注册与过滤、BA 前后和耗时。
 - `inputs.json`、`config.resolved.json`、`provenance.json` 保存输入、容器标签、尺寸变换、配置、版本、哈希和种子。使用 `--reuse-appearance <run-dir>` 可在相同抽帧、SIFT 和 RANSAC 设置下复用已验证的图对。
-- `figures/` 含接触表、匹配、重投影、误差和点云相机图。 `audit/ribbon_supported.ply` 与审计叠图提供雕塑本体的独立证据。
+- `figures/` 含接触表、匹配图、重投影叠图、误差直方图和点云与相机图。
 
-[实测结果与复现命令](docs/SFM_RESULTS.md) · [架构和模块说明](docs/SFM_ARCHITECTURE.md) 
+[命令参数与复现](docs/SFM_PARAMETERS.md) · [架构和模块说明](docs/SFM_ARCHITECTURE.md)
 
 报告源文件在 `report/`。使用 `cd report && latexmk main.tex` 编译。封面姓名和学号待确认。

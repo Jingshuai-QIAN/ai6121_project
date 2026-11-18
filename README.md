@@ -4,9 +4,9 @@
 
 ## Project Overview
 
-This AI6121 course project uses structure from motion (SfM) to reconstruct the 3D structure of an object we call Double Helix from multi-view photographs. [Video of Double Helix](data/video/double_helix.mp4)
+This AI6121 course project uses structure from motion (SfM) to reconstruct the street-facing side of NTU's UOB Innovation Hub, formerly The Hive, from a handheld video. [Source video](data/video/the_hive.mp4)
 
-We plan to take 25 photographs of Double Helix and mark the same eight landmarks in every photograph.
+The main experiment uses 49 uniformly sampled frames and automatically matches SIFT features across views. [Experiment results](report_reference/RESULTS.md)
 
 ## Project Structure
 
@@ -15,7 +15,7 @@ We plan to take 25 photographs of Double Helix and mark the same eight landmarks
 ├── data/           # Project data
 │   ├── figures/    # Photographs for reconstruction
 │   ├── points/     # Corresponding points across photographs
-│   └── video/      # Video of Double Helix
+│   └── video/      # Source videos
 ├── report/         # LaTeX report sources
 ├── .gitignore      # Git ignore rules
 ├── README.md       # English project overview

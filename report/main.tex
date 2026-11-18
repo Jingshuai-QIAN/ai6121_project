@@ -29,7 +29,7 @@
 \begin{titlepage}
   \centering
   \vspace*{\fill}
-  {\LARGE\bfseries 3D Reconstruction of Double Helix\\
+  {\LARGE\bfseries 3D Reconstruction of UOB Innovation Hub\\
     Using Structure from Motion\par}
   \vspace{3em}
 
@@ -44,24 +44,17 @@
 \section{Introduction}
 \label{sec:introduction}
 
-This project uses Structure from Motion (SfM) to build a sparse 3D reconstruction of a sculpture on the NTU campus using photographs taken from different viewpoints. The project calls the sculpture ``Double Helix'' (Figure~\ref{fig:double-helix}).
+This project uses Structure from Motion (SfM) to reconstruct the street-facing side of UOB Innovation Hub, formerly known as The Hive, on the NTU campus~\cite{ntu_campus_art_trail}. The input is a single handheld video recorded while walking along the street. The reconstruction consists of a sparse 3D point cloud and estimated camera poses.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[scale=0.1]{figures/double_helix.jpg}
-  \caption{Double Helix on the NTU campus.}
-  \label{fig:double-helix}
-\end{figure}
-
-The following sections shows details of the project. Section~\ref{sec:methodology} describes the applied SfM pipeline. Section~\ref{sec:experiments} describes input data and evaluation method. Section~\ref{sec:discussion} discusses reconstruction results. Section~\ref{sec:conclusion} summarizes project findings.
+Section~\ref{sec:methodology} presents the projective SfM baseline. Section~\ref{sec:experiments} describes the input data and experimental setup. Section~\ref{sec:discussion} discusses reconstruction results. Section~\ref{sec:conclusion} summarizes the findings.
 
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Overall Review of SfM}
+\subsection{Projective SfM Baseline}
 \label{sec:overall-sfm}
 
-Algorithm~\ref{alg:sfm} summarizes the incremental structure-from-motion (SfM) pipeline used in this project~\cite{opensfm,schonberger2016sfm}. The pipeline starts by recovering the seed camera matrices from the fundamental matrix~\cite[Sec.~9.5]{hartley2004mvg}. It takes \(M \geq 2\) images of the target scene and the 2D observations of \(N \geq 8\) target 3D points in each image. The images form the set \(\mathcal{I} = \{ I_i \mid i = 1, \dots, M \}\). The image coordinates of the \(j\)th 3D point in image \(I_i\) are \(\mathbf u_{ij}=(u_{ij},v_{ij})^\top\), with homogeneous coordinates \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). The observations form the set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M,\ j = 1, \dots, N \}\). The pipeline returns the estimated camera projection matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) and the estimated homogeneous coordinates of the 3D points \(\mathcal{X} = \{ \mathbf{X}_j \mid j = 1, \dots, N \}\).
+Algorithm~\ref{alg:sfm} summarizes the project's projective SfM baseline~\cite{opensfm,schonberger2016sfm}. The pipeline starts by recovering the seed camera matrices from the fundamental matrix~\cite[Sec.~9.5]{hartley2004mvg}. It takes \(M \geq 2\) images of the target scene and the 2D observations of \(N \geq 8\) target 3D points in each image. The images form the set \(\mathcal{I} = \{ I_i \mid i = 1, \dots, M \}\). The image coordinates of the \(j\)th 3D point in image \(I_i\) are \(\mathbf u_{ij}=(u_{ij},v_{ij})^\top\), with homogeneous coordinates \(\tilde{\mathbf u}_{ij}=(u_{ij},v_{ij},1)^\top\). The observations form the set \(\mathcal{U} = \{ \tilde{\mathbf u}_{ij} \mid i = 1, \dots, M,\ j = 1, \dots, N \}\). The pipeline returns the estimated camera projection matrices \(\mathcal{P} = \{ \mathbf{P}_i \mid i = 1, \dots, M \}\) and the estimated homogeneous coordinates of the 3D points \(\mathcal{X} = \{ \mathbf{X}_j \mid j = 1, \dots, N \}\).
 
 
 \begin{algorithm}[htbp]
@@ -225,9 +218,9 @@ In this way, bundle adjustment solves the following optimization problem.
 \label{sec:experiments}
 % How to conduct experiments, e.g. settings, expected results
 
-The experiment uses \(M = 25\) images of Double Helix taken from different viewpoints. In each image \(I_i, i = 1, \dots, M\), the project records the 2D pixel coordinates \(\mathbf u_{ij}, j = 1, \dots, N\) of the same \(N = 8\) landmarks. The landmark index \(j\) links corresponding observations across images.
+The main experiment uses 49 frames sampled uniformly from the UOB Innovation Hub video. Each working image measures \(720 \times 1280\) pixels. The incremental SfM implementation matches SIFT features automatically and links the matches into tracks across the views in which each feature is observed.
 
-The SfM pipeline described in Section~\ref{sec:methodology} takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The estimated points form a sparse reconstruction. The project assesses the spatial arrangement of the reconstructed landmarks qualitatively by inspecting the point cloud from different viewpoints and comparing it with the input images.
+The experiment uses a shared pinhole camera model with an initial focal length of 832 pixels. The pipeline estimates relative pose from a seed pair, registers further views from 2D--3D correspondences, and triangulates new points as views are added. Bundle adjustment refines the camera poses, the 3D points, and the shared focal length. We report the number of registered views, the scene point count, and the root mean square reprojection error in working-image pixels. We inspect the point cloud and compare it with the input frames to assess street-facing coverage.
 
 \section{Discussion}
 \label{sec:discussion}

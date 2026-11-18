@@ -19,7 +19,7 @@ python -m sfm --help
 
 | 选项 | 默认值 | 作用 |
 |---|---|---|
-| `--video PATH` | 必填 | 原视频路径，例如 `data/video/double_helix.mp4`。 |
+| `--video PATH` | 必填 | 原视频路径，例如 `data/video/the_hive.mp4`。 |
 | `--output DIR` | 必填 | 本次运行的新输出目录。 |
 | `--config PATH` | 内置默认配置 | 读取 JSON 覆盖项，可只写要改的键。 |
 | `--frames N` | `25` | 在选定范围内按源帧编号均匀取样，最少 2 帧。改的是抽样数量，帧率信息仍取自原视频。 |
@@ -92,33 +92,33 @@ python -m sfm --help
 ### 先检查 40 帧，再沿用参数重建
 
 ```bash
-python -m sfm inspect --video data/video/double_helix.mp4 \
+python -m sfm inspect --video data/video/the_hive.mp4 \
   --frames 40 --output outputs/inspection_40
 
-python -m sfm reconstruct --video data/video/double_helix.mp4 \
+python -m sfm reconstruct --video data/video/the_hive.mp4 \
   --config outputs/inspection_40/config.resolved.json \
-  --output outputs/helix_40
+  --output outputs/hive_40
 ```
 
 如果还要改工作图像尺寸，可在自定义 JSON 里写 `{"frames": 40, "long_edge": 960}`，再用 `--config` 读取。
 
-### 复现 Double Helix 主实验
+### 复现 UOB Innovation Hub 主实验
 
 ```bash
-python -m sfm reconstruct --video data/video/double_helix.mp4 \
+python -m sfm reconstruct --video data/video/the_hive.mp4 \
   --config configs/orbit49_balanced.json \
-  --output outputs/helix_repro
+  --output outputs/hive_repro
 ```
 
-[主实验配置](../configs/orbit49_balanced.json)抽取 49 帧，使用 5000 个特征预算、96 px 分格、CLAHE、RootSIFT 和 3 帧匹配窗口。焦距倍率为 0.65，工作图像长边为 1280 px，因此初始焦距为 832 px。主实验最终估计为 619.24 px。[实测记录](SFM_RESULTS.md)
+[主实验配置](../configs/orbit49_balanced.json)抽取 49 帧，使用 5000 个特征预算、96 px 分格、CLAHE、RootSIFT 和 3 帧匹配窗口。焦距倍率为 0.65，工作图像长边为 1280 px，因此初始焦距为 832 px。主实验最终估计为 647.53 px。[实测记录](../report_reference/RESULTS.md)
 
 ### 用同一组匹配比较不同焦距初值
 
 ```bash
-python -m sfm reconstruct --video data/video/double_helix.mp4 \
+python -m sfm reconstruct --video data/video/the_hive.mp4 \
   --config configs/orbit49_balanced.json --focal-factor 0.9 \
-  --reuse-appearance outputs/helix_repro \
-  --output outputs/helix_repro_f090
+  --reuse-appearance outputs/hive_repro \
+  --output outputs/hive_repro_f090
 ```
 
 如需测试径向畸变，可以在同样命令上加入 `--fit-k1`，为这次运行另设输出目录。

@@ -1,8 +1,14 @@
 # AI6121 SfM 报告素材
 
-[盒子](results/boxes/) · [双螺旋](results/helix/) · [COLMAP 对照](results/colmap_comparison/)
+[UOB Innovation Hub](results/hive/the_hive_test2/) · [盒子](results/boxes/) · [双螺旋](results/helix/) · [COLMAP 对照](results/colmap_comparison/)
 
-## 可以引用的数据
+## UOB Innovation Hub
+
+主实验从 UOB Innovation Hub（原名 The Hive）的临街视频中均匀抽取 49 帧，注册了全部 49 个视图，恢复了 13,579 个彩色场景点。最终重投影 RMSE 为 0.655 px，共享焦距为 647.53 px。
+
+[输入视频](../data/video/the_hive.mp4) · [全场景与相机](results/hive/the_hive_test2/figures/scene_and_cameras.png) · [主实验指标](results/hive/the_hive_test2/metrics.json) · [运行配置](results/hive/the_hive_test2/config.resolved.json) · [复现命令](../docs/SFM_PARAMETERS.md#复现-uob-innovation-hub-主实验)
+
+## 补充场景数据
 
 | 自主主实验 | 注册视图 | 彩色稀疏点 | 重投影 RMSE（px） | ≥2 张标注图支持的物体点 |
 |---|---:|---:|---:|---:|
