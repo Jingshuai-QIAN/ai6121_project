@@ -1,6 +1,7 @@
 """C: incremental map scheduling, quality filtering and final optimization."""
 
 from collections import Counter
+import logging
 
 import numpy as np
 
@@ -8,6 +9,9 @@ from .bundle import bundle_adjust, distribution
 from .geometry import register_pnp, sampson_signed, seed_pose, skew, homogeneous
 from .model import Reconstruction
 from .triangulation import Triangulator
+
+
+logger = logging.getLogger(__name__)
 
 
 def largest_component(pairs, count):
@@ -67,8 +71,11 @@ def reconstruct(frames, pairs, tracks, initial_camera, config):
     state = Reconstruction(frames, tracks, initial_camera, (), {})
     ranked = sorted((p for p in pairs if p.F is not None and p.i in component),
                     key=lambda pair: -int(pair.inliers.sum()))
+    candidates = ranked[:config["seed_candidates"]]
+    logger.info("[seed] Checking %d candidate pairs in the largest component (%d/%d frames)",
+                len(candidates), len(component), len(frames))
     seeds = []
-    for pair in ranked[:config["seed_candidates"]]:
+    for pair in candidates:
         poses, row = seed_pose(pair, frames, initial_camera, config)
         state.events.append({"stage": "seed_candidate", **row})
         if poses is not None:
@@ -88,8 +95,12 @@ def reconstruct(frames, pairs, tracks, initial_camera, config):
 
     if not state.poses:
         state.status = "no_valid_seed"
+        logger.info("[seed] No candidate could initialize the map")
         return state
 
+    logger.info("[seed] Frames %d and %d initialized %d points",
+                *state.seed, len(state.points))
+    logger.info("[register] Running PnP and triangulation for the remaining views")
     by_view = [[] for _ in frames]
     for tid, track in enumerate(tracks):
         for i in track:
@@ -118,9 +129,13 @@ def reconstruct(frames, pairs, tracks, initial_camera, config):
                                         (config["seed"] + 4099 * i + attempts[i]) % (2 ** 31))
             state.events.append({"stage": "pnp", "image_id": i, "attempt": attempts[i], **detail})
             if pose is None:
+                if available:
+                    logger.info("[register] Frame %d, attempt %d: %s", i, attempts[i], detail["reason"])
                 continue
             state.poses[i] = pose
             update_points(state, config, config["pixel_gate"], True, f"registered_{i}")
+            logger.info("[register] Frame %d registered (%d/%d), %d PnP inliers, %d points after triangulation",
+                        i, len(state.poses), len(frames), detail["inliers"], len(state.points))
             registered = True
             revision += 1
             stalled_ba = False
@@ -129,6 +144,8 @@ def reconstruct(frames, pairs, tracks, initial_camera, config):
         periodic = len(state.poses) - last_ba_size >= config["ba_every"]
         stalled = not registered and not stalled_ba and len(state.poses) >= 3
         if periodic or stalled:
+            if stalled:
+                logger.info("[register] Registration stalled. Refining the map before retrying")
             if bundle_adjust(state, initial_camera, config, "incremental",
                              config["ba_evaluations"]):
                 update_points(state, config, config["pixel_gate"], True, "after_incremental_ba")
@@ -138,17 +155,22 @@ def reconstruct(frames, pairs, tracks, initial_camera, config):
         elif not registered:
             break
 
+    logger.info("[register] Finished with %d/%d registered views", len(state.poses), len(frames))
     completed_focal = bundle_adjust(state, initial_camera, config, "final_focal",
                                      config["ba_final_evaluations"])
     if completed_focal and config["fit_k1"] and len(state.poses) >= 5:
         bundle_adjust(state, initial_camera, config, "final_radial", config["ba_final_evaluations"],
                       fit_k1=True)
+    before_filter = len(state.points)
+    logger.info("[filter] Checking positive depth, parallax and %.2f px reprojection limit",
+                config["final_pixel_gate"])
     changed = update_points(state, config, config["final_pixel_gate"], False, "final_filter")
     if completed_focal and changed:
         use_k1 = any(row["fit_k1"] and row["accepted"] for row in state.ba)
         bundle_adjust(state, initial_camera, config, "after_filter",
                       config["ba_final_evaluations"], fit_k1=use_k1)
         update_points(state, config, config["final_pixel_gate"], False, "after_filter_ba")
+    logger.info("[filter] Retained %d/%d points", len(state.points), before_filter)
 
     active_by_view = Counter(i for point in state.points.values() for i in point.active)
     unsupported = [i for i in state.poses if active_by_view[i] < config["min_pnp_inliers"]]

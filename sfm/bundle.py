@@ -1,5 +1,6 @@
 """C: sparse bundle adjustment in distorted working pixels."""
 
+import logging
 from time import perf_counter
 from types import SimpleNamespace
 import warnings
@@ -11,6 +12,9 @@ from scipy.sparse import bsr_matrix, coo_matrix
 from scipy.spatial.transform import Rotation
 
 from .model import Camera, Point, Pose
+
+
+logger = logging.getLogger(__name__)
 
 
 def distribution(values):
@@ -159,7 +163,13 @@ def solve_bundle(problem, budget):
     status, message = 0, "Evaluation budget reached"
     accepted = 0
     linear_retries = 0
+    last_report = perf_counter()
     for evaluation in range(1, budget + 1):
+        now = perf_counter()
+        if now - last_report >= 5:
+            logger.info("[BA] Step %d/%d (cost %.4g, %d accepted steps)",
+                        evaluation, budget, cost, accepted)
+            last_report = now
         J = problem.jacobian(x)
         weight = np.sqrt(2 / np.maximum(np.abs(residual), 2))
         Jw = J.multiply(weight[:, None]).tocsr()
@@ -231,6 +241,8 @@ def solve_bundle(problem, budget):
 
 def bundle_adjust(state, initial_camera, config, phase, budget, fit_k1=False):
     start = perf_counter()
+    logger.info("[BA] %s: optimizing %d cameras and %d points (up to %d steps)",
+                phase, len(state.poses), len(state.points), budget)
     diagnostic = {"phase": phase, "fit_k1": fit_k1, "accepted": False,
                   "observations": 0, "points": len(state.points),
                   "focal_before_px": state.camera.focal, "k1_before": state.camera.k1}
@@ -281,4 +293,9 @@ def bundle_adjust(state, initial_camera, config, phase, budget, fit_k1=False):
     diagnostic.update(seconds=perf_counter() - start, focal_after_px=state.camera.focal,
                       k1_after=state.camera.k1)
     state.ba.append(diagnostic)
+    status = "converged" if diagnostic.get("converged") else "partial update"
+    if not diagnostic["accepted"]:
+        status = "update rejected"
+    logger.info("[BA] %s: %s (%.1f s, focal %.2f px). %s",
+                phase, status, diagnostic["seconds"], state.camera.focal, diagnostic["message"])
     return diagnostic["accepted"]

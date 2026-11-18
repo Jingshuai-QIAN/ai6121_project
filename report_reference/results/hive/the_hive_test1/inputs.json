@@ -1,0 +1,917 @@
+{
+  "path": "/home/alice/course/6121/group/ai6121_project/data/video/the_hive.mp4",
+  "sha256": "ec1bab7d4bd0162bd48c3a35af180a8c96b6b30cca728a364c3d44669920d02d",
+  "backend": "FFMPEG",
+  "coded_size": [
+    1280,
+    720
+  ],
+  "display_size": [
+    720,
+    1280
+  ],
+  "orientation_metadata_deg": 90.0,
+  "reported_frames": 1074,
+  "reported_mean_fps": 30.030393890278148,
+  "nominal_duration_s": 35.76376666666667,
+  "sample_aspect_ratio": [
+    0.0,
+    1.0
+  ],
+  "container": {
+    "status": "ok",
+    "tool": "PyAV",
+    "version": "18.1.0",
+    "format": "mov,mp4,m4a,3gp,3g2,mj2",
+    "tags": {
+      "compatible_brands": "iso2avc1mp42",
+      "major_brand": "mp42",
+      "minor_version": "0",
+      "creation_time": "2026-11-16T08:26:36.000000Z",
+      "genre": "TypeNormalVideo",
+      "encoder": "Lavf58.20.100"
+    },
+    "duration_s": 35.818,
+    "streams": [
+      {
+        "type": "audio",
+        "frames": 1682,
+        "codec": "aac",
+        "duration_s": 35.818,
+        "tags": {
+          "creation_time": "2026-11-16T08:26:36.000000Z",
+          "language": "und",
+          "handler_name": "SoundHandler"
+        }
+      },
+      {
+        "type": "video",
+        "frames": 1074,
+        "codec": "h264",
+        "duration_s": 35.76376666666667,
+        "tags": {
+          "creation_time": "2026-11-16T08:26:36.000000Z",
+          "language": "und",
+          "handler_name": "VideoHandler"
+        }
+      }
+    ]
+  },
+  "segment": [
+    0,
+    1073
+  ],
+  "selection": "uniform source-frame indices, rounded to nearest integer",
+  "frames": [
+    {
+      "id": 0,
+      "file": "frames/000.png",
+      "source_frame": 0,
+      "timestamp_s": 0.0,
+      "nominal_time_s": 0.0,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 600.8117946264903
+    },
+    {
+      "id": 1,
+      "file": "frames/001.png",
+      "source_frame": 45,
+      "timestamp_s": 1.4665444444444444,
+      "nominal_time_s": 1.498481843575419,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 477.0435232161522
+    },
+    {
+      "id": 2,
+      "file": "frames/002.png",
+      "source_frame": 89,
+      "timestamp_s": 2.9664222222222225,
+      "nominal_time_s": 2.96366409062694,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 676.2608625372416
+    },
+    {
+      "id": 3,
+      "file": "frames/003.png",
+      "source_frame": 134,
+      "timestamp_s": 4.4663,
+      "nominal_time_s": 4.462145934202359,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 457.5169545376142
+    },
+    {
+      "id": 4,
+      "file": "frames/004.png",
+      "source_frame": 179,
+      "timestamp_s": 5.966177777777778,
+      "nominal_time_s": 5.960627777777778,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 797.737360131836
+    },
+    {
+      "id": 5,
+      "file": "frames/005.png",
+      "source_frame": 224,
+      "timestamp_s": 7.466055555555557,
+      "nominal_time_s": 7.459109621353197,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 489.46645393291993
+    },
+    {
+      "id": 6,
+      "file": "frames/006.png",
+      "source_frame": 268,
+      "timestamp_s": 8.932611111111111,
+      "nominal_time_s": 8.924291868404717,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 461.63103838871024
+    },
+    {
+      "id": 7,
+      "file": "frames/007.png",
+      "source_frame": 313,
+      "timestamp_s": 10.432488888888889,
+      "nominal_time_s": 10.422773711980136,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 449.66486991669336
+    },
+    {
+      "id": 8,
+      "file": "frames/008.png",
+      "source_frame": 358,
+      "timestamp_s": 11.932366666666667,
+      "nominal_time_s": 11.921255555555556,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 561.7627038563622
+    },
+    {
+      "id": 9,
+      "file": "frames/009.png",
+      "source_frame": 402,
+      "timestamp_s": 13.398911111111111,
+      "nominal_time_s": 13.386437802607077,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 631.233344683912
+    },
+    {
+      "id": 10,
+      "file": "frames/010.png",
+      "source_frame": 447,
+      "timestamp_s": 14.89878888888889,
+      "nominal_time_s": 14.884919646182496,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 562.1473478326574
+    },
+    {
+      "id": 11,
+      "file": "frames/011.png",
+      "source_frame": 492,
+      "timestamp_s": 16.398666666666667,
+      "nominal_time_s": 16.383401489757915,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 650.2818678378635
+    },
+    {
+      "id": 12,
+      "file": "frames/012.png",
+      "source_frame": 536,
+      "timestamp_s": 17.865211111111112,
+      "nominal_time_s": 17.848583736809434,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 641.0166860224925
+    },
+    {
+      "id": 13,
+      "file": "frames/013.png",
+      "source_frame": 581,
+      "timestamp_s": 19.331766666666667,
+      "nominal_time_s": 19.347065580384854,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 695.9303263070553
+    },
+    {
+      "id": 14,
+      "file": "frames/014.png",
+      "source_frame": 626,
+      "timestamp_s": 20.831644444444446,
+      "nominal_time_s": 20.845547423960273,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 563.8200626420338
+    },
+    {
+      "id": 15,
+      "file": "frames/015.png",
+      "source_frame": 671,
+      "timestamp_s": 22.331522222222222,
+      "nominal_time_s": 22.344029267535692,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 628.7779307140198
+    },
+    {
+      "id": 16,
+      "file": "frames/016.png",
+      "source_frame": 715,
+      "timestamp_s": 23.798066666666667,
+      "nominal_time_s": 23.809211514587215,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 593.059263901933
+    },
+    {
+      "id": 17,
+      "file": "frames/017.png",
+      "source_frame": 760,
+      "timestamp_s": 25.297944444444447,
+      "nominal_time_s": 25.307693358162634,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 713.0579947758239
+    },
+    {
+      "id": 18,
+      "file": "frames/018.png",
+      "source_frame": 805,
+      "timestamp_s": 26.797822222222223,
+      "nominal_time_s": 26.806175201738053,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 859.8308050265655
+    },
+    {
+      "id": 19,
+      "file": "frames/019.png",
+      "source_frame": 849,
+      "timestamp_s": 28.264366666666668,
+      "nominal_time_s": 28.271357448789573,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 786.7340266574707
+    },
+    {
+      "id": 20,
+      "file": "frames/020.png",
+      "source_frame": 894,
+      "timestamp_s": 29.764244444444447,
+      "nominal_time_s": 29.769839292364992,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 846.2379910263062
+    },
+    {
+      "id": 21,
+      "file": "frames/021.png",
+      "source_frame": 939,
+      "timestamp_s": 31.264122222222223,
+      "nominal_time_s": 31.26832113594041,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 795.7963864066229
+    },
+    {
+      "id": 22,
+      "file": "frames/022.png",
+      "source_frame": 984,
+      "timestamp_s": 32.764,
+      "nominal_time_s": 32.76680297951583,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 708.7872803062108
+    },
+    {
+      "id": 23,
+      "file": "frames/023.png",
+      "source_frame": 1028,
+      "timestamp_s": 34.230555555555554,
+      "nominal_time_s": 34.23198522656735,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 623.0764061411917
+    },
+    {
+      "id": 24,
+      "file": "frames/024.png",
+      "source_frame": 1073,
+      "timestamp_s": 35.73043333333334,
+      "nominal_time_s": 35.73046707014277,
+      "oriented_size": [
+        720,
+        1280
+      ],
+      "work_size": [
+        720,
+        1280
+      ],
+      "oriented_to_work": [
+        [
+          1.0,
+          0,
+          0.0
+        ],
+        [
+          0,
+          1.0,
+          0.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "laplacian_variance": 623.3197177842882
+    }
+  ],
+  "intrinsics_initialization": {
+    "source": "assumed_factor",
+    "source_focal_px": null,
+    "source_description": null,
+    "initial_work_K": [
+      [
+        1152.0,
+        0.0,
+        359.5
+      ],
+      [
+        0.0,
+        1152.0,
+        639.5
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "initial_k1": 0.0,
+    "measured_calibration_available": false,
+    "shared_model_assumption": "single selected video segment; inspect for zoom/cuts before fitting"
+  }
+}

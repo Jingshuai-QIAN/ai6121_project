@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/home/alice/course/6121/group/ai6121_project/.venv/bin/python",
+    "-m",
+    "sfm",
+    "reconstruct",
+    "--video",
+    "data/video/the_hive.mp4",
+    "--config",
+    "configs/orbit49_balanced.json",
+    "--output",
+    "tmp/the_hive_test2"
+  ],
+  "python": "3.14.4",
+  "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+  "cpu": "x86_64",
+  "seed": 6121,
+  "versions": {
+    "opencv": "5.1.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.2"
+  },
+  "git": {
+    "commit": "df524cf61b826d7790c7c5fbe3b15e1308527937",
+    "branch": "feat/sift-calibrated-sfm",
+    "dirty": true,
+    "source_sha256": {
+      "sfm/__init__.py": "f1568fb62fb7592194475c8a77380c2624c2641c8df049101ada4ac08f21d483",
+      "sfm/__main__.py": "36af5d016a26f2e03ed230eb166e43a245d2ac0d5621d256dd2dd7610f90cf68",
+      "sfm/audit.py": "918a41d19623fc72584ec1b7783f4c78a0442f07815ee5f21f580af71558ed5f",
+      "sfm/bundle.py": "d7504dd6d88e9abda9b7f6a8810774e0539f7d30f552ce4f01a363839ccf9ad6",
+      "sfm/compare.py": "28bf0e4a0e66e3e3e07f68ffbd2bea651a77a3535a087456a9050fad4a6edc0a",
+      "sfm/data.py": "c15be8d7cffc6c957319b4ab2ce4c9a7403e68b9a86f0849867c68e92836c5d0",
+      "sfm/export.py": "ace25edad9f366244935bb203127b0a827745dfb637428e7499be44baa4ead3d",
+      "sfm/geometry.py": "ea00769ad5b91777ff066a579ba2c7d982bf795e4cd9d5037b244625f3ef4225",
+      "sfm/model.py": "78a0dcab8b5b6eeef4bd990db39f4b2c230c824f787a96f4380cabea91257705",
+      "sfm/reconstruction.py": "f509992667d26d29a81d4ed5bb7035d4f8d061050cce333795ff6973c2ce5cf7",
+      "sfm/triangulation.py": "f974e5b3485f77b75566bfb03ce604ff7f390b1e94f9f5f4d6a4d5c16328af6a"
+    }
+  },
+  "config_sha256": "847abdccf5e5f204f574b0d8b77574a42105bf63a64e5b319dffb0b7ff8f9ce2",
+  "video_sha256": "ec1bab7d4bd0162bd48c3a35af180a8c96b6b30cca728a364c3d44669920d02d"
+}
