@@ -1,0 +1,70 @@
+{"stage": "seed_candidate", "pair": [1, 2], "inliers": 714, "status": "usable", "points": 705, "median_angle_deg": 5.660428010266655, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [2, 3], "inliers": 689, "status": "low_parallax_or_cheirality", "points": 140, "median_angle_deg": 0.9074563833474198, "positive_depth_ratio": 0.9550072568940493}
+{"stage": "seed_candidate", "pair": [1, 3], "inliers": 566, "status": "low_parallax_or_cheirality", "points": 18, "median_angle_deg": 0.5898364871391879, "positive_depth_ratio": 0.3003533568904594}
+{"stage": "seed_candidate", "pair": [0, 1], "inliers": 492, "status": "usable", "points": 471, "median_angle_deg": 2.156826418126046, "positive_depth_ratio": 0.9857723577235772}
+{"stage": "seed_candidate", "pair": [0, 2], "inliers": 434, "status": "usable", "points": 434, "median_angle_deg": 2.0780382566429436, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [23, 24], "inliers": 351, "status": "low_parallax_or_cheirality", "points": 77, "median_angle_deg": 0.8135752395388964, "positive_depth_ratio": 0.7578347578347578}
+{"stage": "seed_candidate", "pair": [18, 19], "inliers": 338, "status": "usable", "points": 338, "median_angle_deg": 3.3586420599008715, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [3, 4], "inliers": 337, "status": "low_parallax_or_cheirality", "points": 321, "median_angle_deg": 1.6601355438120446, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [17, 18], "inliers": 329, "status": "usable", "points": 327, "median_angle_deg": 2.825368741489717, "positive_depth_ratio": 0.9969604863221885}
+{"stage": "seed_candidate", "pair": [0, 3], "inliers": 303, "status": "low_parallax_or_cheirality", "points": 54, "median_angle_deg": 0.35110738017266147, "positive_depth_ratio": 0.8811881188118812}
+{"stage": "seed_candidate", "pair": [19, 20], "inliers": 299, "status": "low_parallax_or_cheirality", "points": 297, "median_angle_deg": 1.9162486202282187, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [22, 23], "inliers": 298, "status": "usable", "points": 293, "median_angle_deg": 9.824667786544566, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [2, 4], "inliers": 296, "status": "low_parallax_or_cheirality", "points": 60, "median_angle_deg": 0.5185913035207041, "positive_depth_ratio": 0.918918918918919}
+{"stage": "seed_candidate", "pair": [20, 21], "inliers": 268, "status": "usable", "points": 268, "median_angle_deg": 3.5311866581396814, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [13, 14], "inliers": 263, "status": "usable", "points": 262, "median_angle_deg": 3.6681075033708384, "positive_depth_ratio": 0.9961977186311787}
+{"stage": "seed_candidate", "pair": [1, 4], "inliers": 239, "status": "low_parallax_or_cheirality", "points": 84, "median_angle_deg": 0.8254749835717706, "positive_depth_ratio": 0.9246861924686193}
+{"stage": "seed_candidate", "pair": [21, 22], "inliers": 232, "status": "usable", "points": 230, "median_angle_deg": 8.12506964615358, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [18, 20], "inliers": 187, "status": "usable", "points": 182, "median_angle_deg": 7.366567656139368, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [16, 17], "inliers": 183, "status": "usable", "points": 183, "median_angle_deg": 3.855343598129228, "positive_depth_ratio": 1.0}
+{"stage": "seed_candidate", "pair": [12, 13], "inliers": 179, "status": "usable", "points": 179, "median_angle_deg": 3.5507350164788387, "positive_depth_ratio": 1.0}
+{"stage": "quality_gate", "reason": "seed", "threshold_px": 4.0, "candidates": 759, "rejected_tracks": 9, "points_before": 0, "points_after": 750, "points_created": 750, "points_removed": 0, "observations_removed": 0, "observations_added": 1500}
+{"stage": "pnp", "image_id": 3, "attempt": 1, "reason": "registered", "correspondences": 389, "inliers": 282, "inlier_ratio": 0.7249357326478149, "median_px": 1.6098539661507716}
+{"stage": "quality_gate", "reason": "registered_3", "threshold_px": 4.0, "candidates": 1390, "rejected_tracks": 105, "points_before": 750, "points_after": 1285, "points_created": 535, "points_removed": 0, "observations_removed": 0, "observations_added": 1352}
+{"stage": "pnp", "image_id": 0, "attempt": 1, "reason": "registered", "correspondences": 444, "inliers": 266, "inlier_ratio": 0.5990990990990991, "median_px": 1.7163398237162488}
+{"stage": "quality_gate", "reason": "registered_0", "threshold_px": 4.0, "candidates": 1768, "rejected_tracks": 132, "points_before": 1285, "points_after": 1636, "points_created": 351, "points_removed": 0, "observations_removed": 0, "observations_added": 968}
+{"stage": "pnp", "image_id": 4, "attempt": 1, "reason": "registered", "correspondences": 360, "inliers": 135, "inlier_ratio": 0.375, "median_px": 1.7701461067448694}
+{"stage": "quality_gate", "reason": "registered_4", "threshold_px": 4.0, "candidates": 2028, "rejected_tracks": 180, "points_before": 1636, "points_after": 1848, "points_created": 212, "points_removed": 0, "observations_removed": 0, "observations_added": 559}
+{"stage": "pnp", "image_id": 5, "attempt": 1, "reason": "pnp_refinement_rejected", "correspondences": 134, "inliers": 38, "inlier_ratio": 0.2835820895522388, "median_px": 2.327328568201643}
+{"stage": "pnp", "image_id": 6, "attempt": 1, "reason": "pnp_ransac_failed", "correspondences": 45, "ransac_inliers": 14}
+{"stage": "pnp", "image_id": 7, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 13}
+{"stage": "pnp", "image_id": 8, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 6}
+{"stage": "pnp", "image_id": 9, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 2}
+{"stage": "pnp", "image_id": 10, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 1}
+{"stage": "pnp", "image_id": 11, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 12, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 13, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 14, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 15, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 16, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 17, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 18, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 19, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 20, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 21, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 22, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 23, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 24, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "quality_gate", "reason": "after_incremental_ba", "threshold_px": 4.0, "candidates": 2028, "rejected_tracks": 146, "points_before": 1848, "points_after": 1882, "points_created": 60, "points_removed": 26, "observations_removed": 62, "observations_added": 144}
+{"stage": "pnp", "image_id": 5, "attempt": 2, "reason": "pnp_refinement_rejected", "correspondences": 135, "inliers": 40, "inlier_ratio": 0.2962962962962963, "median_px": 2.0454662689935237}
+{"stage": "pnp", "image_id": 6, "attempt": 2, "reason": "pnp_ransac_failed", "correspondences": 45, "ransac_inliers": 16}
+{"stage": "pnp", "image_id": 7, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 13}
+{"stage": "pnp", "image_id": 8, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 6}
+{"stage": "pnp", "image_id": 9, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 2}
+{"stage": "pnp", "image_id": 10, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 1}
+{"stage": "pnp", "image_id": 11, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 12, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 13, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 14, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 15, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 16, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 17, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 18, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 19, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 20, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 21, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 22, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 23, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "pnp", "image_id": 24, "attempt": 0, "reason": "insufficient_3d_2d_support", "correspondences": 0}
+{"stage": "quality_gate", "reason": "final_filter", "threshold_px": 3.0, "candidates": 1882, "rejected_tracks": 77, "points_before": 1882, "points_after": 1805, "points_created": 0, "points_removed": 77, "observations_removed": 181, "observations_added": 0}
+{"stage": "quality_gate", "reason": "after_filter_ba", "threshold_px": 3.0, "candidates": 1805, "rejected_tracks": 485, "points_before": 1805, "points_after": 1320, "points_created": 0, "points_removed": 485, "observations_removed": 974, "observations_added": 12}

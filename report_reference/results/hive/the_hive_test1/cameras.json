@@ -1,0 +1,467 @@
+{
+  "convention": "X_camera = R_cw @ X_world + t_cw; center = -R_cw.T @ t_cw",
+  "scale": "arbitrary; fixed nonzero seed translation component",
+  "K_work": [
+    [
+      806.0097348720706,
+      0.0,
+      359.5
+    ],
+    [
+      0.0,
+      806.0097348720706,
+      639.5
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distortion_opencv": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "initial_K_work": [
+    [
+      1152.0,
+      0.0,
+      359.5
+    ],
+    [
+      0.0,
+      1152.0,
+      639.5
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "cameras": [
+    {
+      "id": 0,
+      "source_frame": 0,
+      "registered": true,
+      "reason": "registered",
+      "features": 4500,
+      "observations": 463,
+      "median_px": 0.7405290035949277,
+      "R_cw": [
+        [
+          0.9954666915775006,
+          0.05152374734546407,
+          0.07994604067260783
+        ],
+        [
+          -0.0533590024269094,
+          0.9983547480393411,
+          0.020990805780364996
+        ],
+        [
+          -0.07873298431883907,
+          -0.025161488961997297,
+          0.9965781538110621
+        ]
+      ],
+      "t_cw": [
+        -0.17002493978925265,
+        -0.0868013714952031,
+        0.17620543622397172
+      ],
+      "center_world": [
+        0.17849570955251562,
+        0.09985247454728532,
+        -0.16018763684128418
+      ]
+    },
+    {
+      "id": 1,
+      "source_frame": 45,
+      "registered": true,
+      "reason": "seed",
+      "features": 4500,
+      "observations": 1022,
+      "median_px": 0.47269502219751536,
+      "R_cw": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "t_cw": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "center_world": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": 2,
+      "source_frame": 89,
+      "registered": true,
+      "reason": "seed",
+      "features": 4500,
+      "observations": 964,
+      "median_px": 0.48115201932788204,
+      "R_cw": [
+        [
+          0.9950780921114329,
+          -0.012935948187106487,
+          0.09824587443944448
+        ],
+        [
+          0.012249641123173808,
+          0.9998961969426162,
+          0.007585620083175268
+        ],
+        [
+          -0.09833380340566535,
+          -0.006344807656132627,
+          0.9951332606860163
+        ]
+      ],
+      "t_cw": [
+        -0.9954011254789475,
+        -0.1305013304535598,
+        -0.015035729122887061
+      ],
+      "center_world": [
+        0.9906219268596862,
+        0.1175159278226285,
+        0.11374654165270631
+      ]
+    },
+    {
+      "id": 3,
+      "source_frame": 134,
+      "registered": true,
+      "reason": "registered",
+      "features": 4500,
+      "observations": 656,
+      "median_px": 0.6920302533488532,
+      "R_cw": [
+        [
+          0.9967816356326209,
+          -0.0650550586951872,
+          0.0468423975018641
+        ],
+        [
+          0.06285325106401769,
+          0.9969137424999372,
+          0.047036781835625444
+        ],
+        [
+          -0.049757810404402386,
+          -0.0439412033623843,
+          0.997794232770878
+        ]
+      ],
+      "t_cw": [
+        -0.768979258170112,
+        -0.2617078156128824,
+        -0.0063873348013960985
+      ],
+      "center_world": [
+        0.7826357699724585,
+        0.21059345995103218,
+        0.05470397133716396
+      ]
+    },
+    {
+      "id": 4,
+      "source_frame": 179,
+      "registered": true,
+      "reason": "registered",
+      "features": 4500,
+      "observations": 213,
+      "median_px": 0.8000451616772871,
+      "R_cw": [
+        [
+          0.9969000607128914,
+          -0.07192273264358463,
+          -0.03189654338189147
+        ],
+        [
+          0.07242146264749029,
+          0.9972648241853199,
+          0.014764897243838988
+        ],
+        [
+          0.030747368970882795,
+          -0.017029121283918397,
+          0.9993821132728291
+        ]
+      ],
+      "t_cw": [
+        -0.4893343223382332,
+        -0.16047416808318343,
+        -0.2629786755899326
+      ],
+      "center_world": [
+        0.5075250919874473,
+        0.1203626856191938,
+        0.24957749571808543
+      ]
+    },
+    {
+      "id": 5,
+      "source_frame": 224,
+      "registered": false,
+      "reason": "pnp_refinement_rejected",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 6,
+      "source_frame": 268,
+      "registered": false,
+      "reason": "pnp_ransac_failed",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 7,
+      "source_frame": 313,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 8,
+      "source_frame": 358,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 9,
+      "source_frame": 402,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 10,
+      "source_frame": 447,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 11,
+      "source_frame": 492,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 12,
+      "source_frame": 536,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 13,
+      "source_frame": 581,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 14,
+      "source_frame": 626,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 15,
+      "source_frame": 671,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 16,
+      "source_frame": 715,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 17,
+      "source_frame": 760,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 18,
+      "source_frame": 805,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 19,
+      "source_frame": 849,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 20,
+      "source_frame": 894,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 21,
+      "source_frame": 939,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4501,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 22,
+      "source_frame": 984,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 23,
+      "source_frame": 1028,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    },
+    {
+      "id": 24,
+      "source_frame": 1073,
+      "registered": false,
+      "reason": "insufficient_3d_2d_support",
+      "features": 4500,
+      "observations": 0,
+      "median_px": null,
+      "R_cw": null,
+      "t_cw": null,
+      "center_world": null
+    }
+  ]
+}

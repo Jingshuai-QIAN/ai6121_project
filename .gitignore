@@ -10,3 +10,5 @@ __pycache__/
 !/docs/SFM_RESULTS.md
 /.venv-sfm/
 !/docs/交接说明.md
+!/docs/SFM_PARAMETERS.md
+!/docs/待办.md

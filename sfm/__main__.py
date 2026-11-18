@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import logging
 from pathlib import Path
 import platform
 import subprocess
@@ -21,6 +22,7 @@ from .reconstruction import final_pair_geometry, reconstruct
 
 
 DEFAULT_CONFIG = Path(__file__).resolve().parents[1] / "configs/default.json"
+logger = logging.getLogger("sfm")
 
 
 def resolve_config(args):
@@ -83,6 +85,8 @@ def run(args):
     rng = np.random.default_rng(config["seed"])
     output = args.output.resolve()
     video = args.video.resolve(strict=True)
+    logger.info("[%s] Input: %s", args.action, video)
+    logger.info("[%s] Output: %s", args.action, output)
     output.mkdir(parents=True)
     figures = output / "figures"
     figures.mkdir()
@@ -97,9 +101,15 @@ def run(args):
     elapsed = {}
     start = perf_counter()
     stage = start
+    end = config["end"] if config["end"] is not None else "last"
+    logger.info("[frames] Sampling %d frames from source frames %d to %s (max edge %d px)",
+                config["frames"], config["start"], end, config["long_edge"])
     frames, inputs = prepare_frames(video, config, output / "frames")
     contact_sheet(frames, figures / "contact_sheet.jpg")
     elapsed["prepare"] = perf_counter() - stage
+    width, height = frames[0].record["work_size"]
+    logger.info("[frames] Ready: %d frames at %d x %d px (%.1f s)",
+                len(frames), width, height, elapsed["prepare"])
     camera = initial_camera(frames, config, args.source_focal_px)
     high = max(frames[0].image.shape[:2])
     if not config["focal_bounds"][0] * high <= camera.focal <= config["focal_bounds"][1] * high:
@@ -111,6 +121,7 @@ def run(args):
         "shared_model_assumption": "single selected video segment; inspect for zoom/cuts before fitting",
     }
     write_json(output / "inputs.json", inputs)
+    logger.info("[camera] Initial focal length: %.2f working px", camera.focal)
     provenance["video_sha256"] = inputs["sha256"]
     if args.reuse_appearance:
         provenance["reused_appearance"] = {
@@ -119,47 +130,67 @@ def run(args):
         }
     write_json(output / "provenance.json", provenance)
     if args.action == "inspect":
-        print(f"Decoded {len(frames)} selected frames of {inputs['reported_frames']}: {output}")
+        print(f"Decoded {len(frames)} selected frames of {inputs['reported_frames']}: {output}",
+              flush=True)
         return 0
 
     key = appearance_key(inputs, config)
     if args.reuse_appearance:
         stage = perf_counter()
+        logger.info("[cache] Loading cached features and matches from %s", args.reuse_appearance)
         pairs = load_appearance(args.reuse_appearance, frames, key)
         elapsed["appearance_cache_load"] = perf_counter() - stage
     else:
         stage = perf_counter()
+        logger.info("[SIFT] Extracting features in %d frames", len(frames))
         extract_features(frames, config)
         elapsed["sift"] = perf_counter() - stage
+        logger.info("[SIFT] Extracted %d features (%.1f s)",
+                    sum(len(frame.xy) for frame in frames), elapsed["sift"])
         stage = perf_counter()
         pairs = []
-        for (i, j), schedule in candidate_pairs(len(frames), config["window"], config["loop_window"]):
+        scheduled = candidate_pairs(len(frames), config["window"], config["loop_window"])
+        total = len(scheduled)
+        interval = max(1, (total + 9) // 10)
+        verified = 0
+        logger.info("[match] Matching and geometrically verifying %d image pairs", total)
+        for done, ((i, j), schedule) in enumerate(scheduled, 1):
             pair = match_pair(frames[i], frames[j], config["ratio"])
             pair.counts["schedule"] = schedule
             verify_pair(pair, frames[i], frames[j], config, rng)
             pairs.append(pair)
+            verified += pair.F is not None
+            if done == 1 or done % interval == 0 or done == total:
+                logger.info("[match] %d/%d pairs checked, %d verified (%.1f s)",
+                            done, total, verified, perf_counter() - stage)
         elapsed["matching_and_geometry"] = perf_counter() - stage
         stage = perf_counter()
+        logger.info("[cache] Saving features and matches")
         save_appearance(output, frames, pairs, key)
         elapsed["appearance_cache_write"] = perf_counter() - stage
     stage = perf_counter()
+    verified = sum(pair.F is not None for pair in pairs)
+    logger.info("[tracks] Linking observations across %d verified image pairs", verified)
     tracks, conflicts = build_tracks(pairs)
     elapsed["tracks"] = perf_counter() - stage
-    print(f"{len(pairs)} pairs tested, {sum(p.F is not None for p in pairs)} verified, "
+    print(f"{len(pairs)} pairs tested, {verified} verified, "
           f"{len(tracks)} candidate tracks", flush=True)
     stage = perf_counter()
     state = reconstruct(frames, pairs, tracks, camera, config)
     elapsed["incremental_and_ba"] = perf_counter() - stage
     stage = perf_counter()
+    logger.info("[check] Rechecking pair geometry against the final camera poses")
     checks = final_pair_geometry(state, pairs, config["sampson_px"])
     elapsed["final_geometry_check"] = perf_counter() - stage
     stage = perf_counter()
+    logger.info("[export] Writing results and figures to %s", output)
     metrics = export_result(output, state, pairs, checks, elapsed, conflicts, camera)
     elapsed["export"] = perf_counter() - stage
     elapsed["total"] = perf_counter() - start
     write_json(output / "metrics.json", metrics)
+    logger.info("[export] Complete (%.1f s total)", elapsed["total"])
     print(f"{state.status}: {len(state.poses)}/{len(frames)} cameras; {len(state.points)} points; "
-          f"f={state.camera.focal:.2f} px, k1={state.camera.k1:.5f}; {output}")
+          f"f={state.camera.focal:.2f} px, k1={state.camera.k1:.5f}; {output}", flush=True)
     return {"success": 0, "two_view": 0, "partial": 3}.get(state.status, 2)
 
 
@@ -180,6 +211,11 @@ def main():
     args = parser.parse_args()
     if (args.source_focal_px is None) != (args.focal_source is None):
         parser.error("--source-focal-px and --focal-source must be supplied together")
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("[sfm] %(message)s"))
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
     try:
         return run(args)
     except (OSError, TypeError, ValueError, cv2.error) as error:
