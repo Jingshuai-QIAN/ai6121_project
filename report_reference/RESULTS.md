@@ -1,14 +1,65 @@
 # AI6121 SfM 报告素材
 
-[UOB Innovation Hub](results/hive/the_hive_test2/) · [盒子](results/boxes/) · [双螺旋](results/helix/) · [COLMAP 对照](results/colmap_comparison/)
+最终报告以 **UOB Innovation Hub** 为唯一主场景。Boxes 与 Double Helix 目录保留为历史实验材料，不纳入当前主结论。
+
+[主实验目录](results/hive/the_hive_test2/) · [报告图与图注](results/hive/REPORT_ASSETS.md) · [主实验指标](results/hive/the_hive_test2/metrics.json) · [立面审计数据](results/hive/the_hive_test2/facade_audit/facade_audit.json)
 
 ## UOB Innovation Hub
 
-主实验从 UOB Innovation Hub（原名 The Hive）的临街视频中均匀抽取 49 帧，注册了全部 49 个视图，恢复了 13,579 个彩色场景点。最终重投影 RMSE 为 0.655 px，共享焦距为 647.53 px。
+主实验从 UOB Innovation Hub（原名 The Hive）的临街视频中均匀抽取 49 帧，注册了全部 49 个视图，恢复了 13,579 个彩色场景点。最终重投影 RMSE 为 0.655 px，共享焦距从 832 px 初值优化为 647.53 px。9 张前、中、后段代表帧的保守立面审计进一步确认了 911 个至少由两张标注图支持的建筑立面点，其中 166 个得到至少三张标注图支持。
 
 [输入视频](../data/video/the_hive.mp4) · [全场景与相机](results/hive/the_hive_test2/figures/scene_and_cameras.png) · [主实验指标](results/hive/the_hive_test2/metrics.json) · [运行配置](results/hive/the_hive_test2/config.resolved.json) · [复现命令](../docs/SFM_PARAMETERS.md#复现-uob-innovation-hub-主实验)
 
-## 补充场景数据
+### 主结果表
+
+| 指标 | 结果 |
+|---|---:|
+| 视频长度 / 原始帧数 | 35.76 s / 1,074 |
+| 工作图像 | 49 张，720 × 1280 |
+| 注册视图 | **49/49** |
+| 彩色稀疏场景点 | **13,579** |
+| 至少五视图支持的场景点 | **1,412** |
+| 活动观测 | 38,223 |
+| 最终重投影 RMSE | **0.655 px** |
+| 最终共享焦距 | 647.53 px |
+| 至少两张标注图支持的立面点 | **911** |
+| 至少三张标注图支持的立面点 | **166** |
+
+立面区域只用于事后评估，不参与特征匹配、位姿估计、三角化或 BA。审计同时要求原始特征观测和最终模型的预测像素落在经腐蚀的立面内区，因此点数是圆筒楼体结构的保守多视图证据。
+
+### 主报告素材
+
+| 代表图 | 图注参考 |
+|---|---|
+| [49 帧接触表](results/hive/the_hive_test2/figures/contact_sheet.jpg) | 从约 35.76 秒临街视频中均匀抽取的 49 张工作图，展示相机沿建筑正面移动时的视角覆盖。 |
+| [种子匹配](results/hive/the_hive_test2/figures/matches_seed_04_05.jpg) | 用于初始化的工作帧 4 和 5，对应原视频第 89 和 112 帧；通过几何验证的对应点为初始两视图重建提供约束。 |
+| [第 24 帧重投影](results/hive/the_hive_test2/figures/reprojection_024.jpg) | 工作帧 24（源帧 536）的特征观测与 BA 后投影位置；最终全局重投影 RMSE 为 0.655 px。 |
+| [全场景与相机轨迹](results/hive/the_hive_test2/figures/scene_and_cameras.png) | 13,579 个彩色稀疏点与 49 个已注册相机，展示临街拍摄覆盖及任意尺度下的相机轨迹。 |
+| [立面审计叠图](results/hive/the_hive_test2/facade_audit/facade_support.jpg) | 9 张代表帧中的保守圆筒立面区域（绿色）以及得到至少两视图确认的观测。 |
+| [两视图立面点云近景](results/hive/the_hive_test2/facade_audit/facade_closeup.png) | 911 个至少由两张标注图支持的建筑立面点，从两个三维视角展示。 |
+| [三视图立面点云近景](results/hive/the_hive_test2/facade_audit/facade_closeup_3plus.png) | 更严格的 166 个至少由三张标注图支持的建筑立面点。 |
+
+[完整点云](results/hive/the_hive_test2/pointcloud.ply) · [两视图立面点云](results/hive/the_hive_test2/facade_audit/facade_supported_2plus.ply) · [三视图立面点云](results/hive/the_hive_test2/facade_audit/facade_supported_3plus.ply) · [立面标注](../data/evaluation/hive_facade_regions.json)
+
+### UOB Innovation Hub COLMAP 外部基线
+
+COLMAP 基线复用主实验保存的同一组 49 张 PNG、相同的 150 个图对、单一共享 `SIMPLE_PINHOLE` 相机以及 832 px 焦距初值。PyCOLMAP 4.2.1 在 CPU 上运行，结果仅作为外部基线，不属于自主 SfM 实现。
+
+| 指标 | 自主实现 | COLMAP 外部基线 |
+|---|---:|---:|
+| 注册视图 | 49/49 | 49/49 |
+| 彩色稀疏点 | 13,579 | 36,948 |
+| 活动观测 | 38,223 | 112,145 |
+| 共享评估器重投影 RMSE | **0.655 px** | 0.858 px |
+| 最终共享焦距 | 647.53 px | 638.13 px |
+| 至少两张标注图支持的立面点 | 911 | **3,775** |
+| 至少三张标注图支持的立面点 | 166 | **789** |
+
+COLMAP 得到约 2.72 倍的场景点、4.14 倍的两视图立面点和 4.75 倍的三视图立面点；自主实现的共享评估重投影 RMSE 更低。两套地图使用全部 49 个同名相机做相似对齐，下图采用相同显示窗口。
+
+[同视角对照图](results/hive/colmap_comparison/aligned_comparison.png) · [完整比较指标](results/hive/colmap_comparison/comparison.json) · [基线配置、命令与披露](results/hive/colmap_same_pairs/BASELINE.md) · [COLMAP 点云](results/hive/colmap_same_pairs/pointcloud.ply)
+
+## 历史补充场景数据（不作为当前主结果）
 
 | 自主主实验 | 注册视图 | 彩色稀疏点 | 重投影 RMSE（px） | ≥2 张标注图支持的物体点 |
 |---|---:|---:|---:|---:|
