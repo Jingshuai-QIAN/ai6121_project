@@ -60,7 +60,8 @@ class Regions:
         width, height = annotations["preview_size"]
         categories = annotations.get("regions_by_source_frame")
         if categories is None:
-            categories = {"ribbon": annotations["polygons_by_source_frame"]}
+            label = annotations.get("region_label", "region")
+            categories = {label: annotations["polygons_by_source_frame"]}
         frames = {str(row["source_frame"]): row for row in inputs["frames"]}
         masks = {}
         side = 2 * annotations["erosion_preview_px"] + 1
@@ -150,6 +151,7 @@ def measure(data, regions):
     accepted = (depth > 0) & (error <= 3)
     common_gate = np.array([angle(rows[accepted[rows]]) >= 1 for rows in groups])
     target = np.zeros(len(xyz), dtype=bool)
+    target_3plus = np.zeros(len(xyz), dtype=bool)
     target_hits = np.zeros(len(p), dtype=bool)
     details = {}
     for label, by_view in regions.masks.items():
@@ -175,6 +177,7 @@ def measure(data, regions):
             "support_views_by_image": dict(Counter(map(int, v[confirmed]))),
         }
         target |= supported
+        target_3plus |= label_lengths >= 3
         target_hits |= confirmed
     report = {
         "registered": len(R), "total": len(regions.work),
@@ -191,11 +194,12 @@ def measure(data, regions):
         "max_triangulation_angle_deg": stats(angles), "focal_work_px": float(data["K_work"][0, 0]),
         "principal_work_px": data["K_work"][:2, 2].tolist(), "k1": float(data["k1"]),
         "regions": details, "target_points": int(target.sum()),
+        "target_labeled_views_3plus": int(target_3plus.sum()),
         "target_active_track_3plus": int(np.sum(target & (lengths >= 3))),
         "target_error_px": stats(error[target_hits]), "target_parallax_deg": stats(angles[target]),
         "target_common_gate": int(np.sum(target & common_gate)),
     }
-    return report, centers, target, lengths
+    return report, centers, target, target_3plus, lengths
 
 
 def native_graph(run, inputs):
@@ -333,9 +337,11 @@ def common_figures(rows, directory):
     right /= np.linalg.norm(right)
     basis = np.column_stack((right, np.cross(up, right), up))
     origin = np.median(rows[0][2]["xyz"][rows[0][3]], axis=0)
-    clouds = [(aligned["xyz"] - origin) @ basis for _, _, aligned, _, _ in rows]
-    cameras = [(aligned["centers"] - origin) @ basis for _, _, aligned, _, _ in rows]
-    targets = np.vstack([cloud[mask] for cloud, (_, _, _, mask, _) in zip(clouds, rows, strict=True)])
+    clouds = [(aligned["xyz"] - origin) @ basis for _, _, aligned, _, _, _ in rows]
+    cameras = [(aligned["centers"] - origin) @ basis for _, _, aligned, _, _, _ in rows]
+    targets = np.vstack([
+        cloud[mask] for cloud, (_, _, _, mask, _, _) in zip(clouds, rows, strict=True)
+    ])
     target_envelope = np.quantile(targets, [.01, .99], axis=0)
     near = cube(np.vstack(cameras + [target_envelope]), margin=1.2)
     close = cube(target_envelope, margin=1.16)
@@ -362,9 +368,12 @@ def common_figures(rows, directory):
         ax.set_yticklabels([])
         ax.set_zticklabels([])
 
-    for i, ((label, data, aligned, target, lengths), xyz, C) in enumerate(zip(rows, clouds, cameras, strict=True)):
-        sets = (np.ones(len(xyz), dtype=bool), target, target & (lengths >= 3))
-        specs = (("Scene", near, .9), ("Region-supported", close, 4), ("Region + track ≥3", close, 4))
+    for i, ((label, data, aligned, target, target_3plus, lengths), xyz, C) in enumerate(
+        zip(rows, clouds, cameras, strict=True)
+    ):
+        sets = (np.ones(len(xyz), dtype=bool), target, target_3plus)
+        specs = (("Scene", near, .9), ("Region-supported (2+ views)", close, 4),
+                 ("Region-supported (3+ views)", close, 4))
         out = {}
         vectors = aligned["directions"] @ basis
         for j, (subset, (kind, (low, high), size)) in enumerate(zip(sets, specs, strict=True)):
@@ -396,7 +405,7 @@ def main():
     args = parser.parse_args()
     regions = Regions.load(args.reference, args.labels)
     inputs = input_manifest(args.reference)
-    args.output.mkdir(parents=True)
+    args.output.mkdir(parents=True, exist_ok=True)
     write(args.output / "frame_manifest.json", inputs)
     common = {(p["i"], p["j"]) for p in read(args.reference / "pairs.json")}
     report = {"audit_labels": str(regions.labels_path), "models": {}, "alignment": {},
@@ -410,7 +419,7 @@ def main():
         if inputs != manifest:
             raise ValueError(f"Input content differs for {run}")
         data = load_map(run)
-        result, centers, target, lengths = measure(data, regions)
+        result, centers, target, target_3plus, lengths = measure(data, regions)
         graph = external_graph(run, inputs) if external else native_graph(run, inputs)
         result["appearance"] = graph_summary(graph, regions, common)
         if not external:
@@ -428,16 +437,17 @@ def main():
         aligned = {"xyz": scale * data["xyz"] @ rotation + offset,
                    "centers": scale * centers @ rotation + offset,
                    "directions": data["R_cw"][:, 2] @ rotation}
-        rows.append((label, data, aligned, target, lengths))
+        rows.append((label, data, aligned, target, target_3plus, lengths))
         np.savez_compressed(args.output / f"aligned_{index}.npz", xyz=aligned["xyz"], rgb=data["rgb"],
                             centers=aligned["centers"], image_ids=data["image_ids"],
-                            region_supported=target, track_lengths=lengths)
+                            region_supported=target, region_supported_3plus=target_3plus,
+                            track_lengths=lengths)
     if not args.metrics_only:
         report["display"] = common_figures(rows, args.output)
     write(args.output / "comparison.json", report)
     for label, row in report["models"].items():
         print(label, row["registered"], row["points"], row["target_points"],
-              row["target_active_track_3plus"], row["pixels"]["rmse"])
+              row["target_labeled_views_3plus"], row["pixels"]["rmse"])
 
 
 if __name__ == "__main__":
