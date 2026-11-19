@@ -1,0 +1,37 @@
+{
+  "command": [
+    "C:\\Users\\zhangjiayang\\Documents\\Codex\\2026-11-15\\qing\\.conda\\ai6121-colmap\\python.exe",
+    "experiments\\colmap_sparse.py",
+    "report_reference\\results\\hive\\the_hive_test2",
+    "outputs\\hive_colmap_same_pairs",
+    "--same-pairs",
+    "--focal",
+    "832",
+    "--threads",
+    "4"
+  ],
+  "python": "3.11.18",
+  "pycolmap": "4.2.1",
+  "numpy": "2.4.6",
+  "cuda_build": false,
+  "runner_sha256": "8f288b6d726ae7a22b4521ad2a853b96aa0051dd60fcfb3da43d9e3e04135e2a",
+  "reference": "C:\\Users\\zhangjiayang\\Desktop\\ai6121_project-main\\report_reference\\results\\hive\\the_hive_test2",
+  "input_manifest_sha256": "7c425ccae12c0860852f0fc5a3d21ede12de2b23e4ebf1627a01b8a0752353e8",
+  "device": "cpu",
+  "pair_schedule": "reference pairs",
+  "scheduled_pairs": 150,
+  "camera_mode": "SINGLE",
+  "initial_model": "SIMPLE_PINHOLE",
+  "initial_focal_px": 832.0,
+  "initial_camera_params_colmap_px": [
+    832.0,
+    360.0,
+    640.0
+  ],
+  "reader": "ImageReaderOptions(camera_model='SIMPLE_PINHOLE', mask_path=., existing_camera_id=-1, camera_params='832.0,360.0,640.0', default_focal_length_factor=1.2, camera_mask_path=.)",
+  "extraction": "FeatureExtractionOptions(type=FeatureExtractorType.SIFT, max_image_size=1280, num_threads=4, use_gpu=False, gpu_index='-1', sift=SiftExtractionOptions(max_num_features=8192, first_octave=-1, num_octaves=4, octave_resolution=3, peak_threshold=0.006666666666666667, edge_threshold=10.0, estimate_affine_shape=False, max_num_orientations=2, upright=False, darkness_adaptivity=False, domain_size_pooling=False, dsp_min_scale=0.16666666666666666, dsp_max_scale=3.0, dsp_num_scales=10, normalization=Normalization.L1_ROOT))",
+  "matching": "FeatureMatchingOptions(type=FeatureMatcherType.SIFT_BRUTEFORCE, num_threads=4, use_gpu=False, gpu_index='-1', max_num_matches=32768, guided_matching=False, skip_geometric_verification=False, rig_verification=False, skip_image_pairs_in_same_frame=False, sift=SiftMatchingOptions(max_ratio=0.8, max_distance=0.7, cross_check=True, cpu_brute_force_matcher=False))",
+  "verification": "TwoViewGeometryOptions(min_num_inliers=15, min_inlier_ratio=0.0, min_E_F_inlier_ratio=0.95, max_H_inlier_ratio=0.8, watermark_min_inlier_ratio=0.7, watermark_border_size=0.1, detect_watermark=True, multiple_ignore_watermark=True, watermark_detection_max_error=4.0, filter_stationary_matches=False, stationary_matches_max_error=4.0, force_H_use=False, use_degensac=False, use_sampson_refinement=True, compute_relative_pose=False, multiple_models=False, ransac=RANSACOptions(max_error=4.0, min_inlier_ratio=0.25, confidence=0.999, dyn_num_trials_multiplier=3.0, min_num_trials=100, max_num_trials=10000, random_seed=6121, num_threads=1))",
+  "pairing": "ImportedPairingOptions(block_size=1225, match_list_path=C:\\Users\\zhangjiayang\\Desktop\\ai6121_project-main\\outputs\\hive_colmap_same_pairs\\pair_list.txt)",
+  "mapping": "IncrementalPipelineOptions(min_num_matches=15, ignore_watermarks=False, multiple_models=True, max_num_models=50, max_model_overlap=20, min_model_size=10, init_image_id1=-1, init_image_id2=-1, init_num_trials=200, structure_less_registration_fallback=False, structure_less_registration_only=False, extract_colors=True, num_threads=4, random_seed=6121, min_focal_length_ratio=0.45, max_focal_length_ratio=2.0, max_extra_param=1.0, ba_refine_focal_length=True, ba_refine_principal_point=False, ba_refine_extra_params=False, ba_refine_sensor_from_rig=True, ba_min_num_residuals_for_cpu_multi_threading=50000, ba_local_function_tolerance=0.0, ba_local_max_num_iterations=-1, ba_global_frames_ratio=1.1, ba_global_points_ratio=1.1, ba_global_frames_freq=500, ba_global_points_freq=250000, ba_global_function_tolerance=0.0, ba_global_max_num_iterations=-1, ba_local_max_refinements=2, ba_local_max_refinement_change=0.001, ba_global_max_refinements=5, ba_global_max_refinement_change=0.0005, ba_use_gpu=False, ba_gpu_index='-1', ba_local_backend=BundleAdjustmentBackend.CERES, ba_global_backend=BundleAdjustmentBackend.CERES, use_prior_position=False, use_robust_loss_on_prior_position=False, prior_position_loss_scale=7.815, snapshot_path=., snapshot_frames_freq=0, image_path=., image_names=[], load_all_images=False, fix_existing_frames=False, constant_rigs=set(), constant_cameras=set(), max_runtime_seconds=-1, mapper=IncrementalMapperOptions(init_min_num_inliers=100, init_max_error=4.0, init_max_forward_motion=0.95, init_min_tri_angle=16.0, init_max_reg_trials=2, abs_pose_max_error=12.0, abs_pose_min_num_inliers=30, abs_pose_min_inlier_ratio=0.25, abs_pose_refine_focal_length=True, abs_pose_refine_extra_params=True, ba_local_num_images=6, ba_local_min_tri_angle=6.0, ba_global_ignore_redundant_points3D=False, ba_global_prune_points_min_coverage_gain=0.05, min_focal_length_ratio=0.1, max_focal_length_ratio=10.0, max_extra_param=1.0, filter_max_reproj_error=4.0, filter_min_tri_angle=1.5, max_reg_trials=3, fix_existing_frames=False, constant_rigs=set(), constant_cameras=set(), num_threads=-1, random_seed=6121, image_selection_method=ImageSelectionMethod.MIN_UNCERTAINTY), triangulation=IncrementalTriangulatorOptions(max_transitivity=1, create_max_angle_error=2.0, continue_max_angle_error=2.0, merge_max_reproj_error=4.0, complete_max_reproj_error=4.0, complete_max_transitivity=5, re_max_angle_error=5.0, re_min_ratio=0.2, re_max_trials=1, min_angle=1.5, ignore_two_view_tracks=False, min_focal_length_ratio=0.1, max_focal_length_ratio=10.0, max_extra_param=1.0, random_seed=6121))"
+}

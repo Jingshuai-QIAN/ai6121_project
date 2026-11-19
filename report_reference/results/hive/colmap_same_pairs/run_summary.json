@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": 0,
+      "registered": 49,
+      "points": 36948
+    }
+  ],
+  "selected": {
+    "id": 0,
+    "registered": 49,
+    "points": 36948
+  },
+  "elapsed_seconds": {
+    "features": 17.238091799998074,
+    "matching": 79.11559080000006,
+    "mapping": 29.971147400006885,
+    "total": 128.77410940000118
+  }
+}
