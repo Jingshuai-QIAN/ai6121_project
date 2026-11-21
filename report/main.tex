@@ -7,6 +7,7 @@
 \usepackage{amsfonts}
 \usepackage[margin=25mm]{geometry}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{xcolor}
@@ -220,14 +221,145 @@ In this way, bundle adjustment solves the following optimization problem.
 
 The experiment uses \(M = 49\) images of UOB Innovation Hub taken from different viewpoints. In each image \(I_i, i = 1, \dots, M\), the project records the 2D pixel coordinates \(\mathbf u_{ij}\) of the landmarks observed in that image. The landmark index \(j\) links corresponding observations across images, forming 15,551 candidate tracks.
 
-The SfM pipeline takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The 13,579 estimated points form a sparse reconstruction. The project assesses the spatial arrangement of the reconstructed landmarks qualitatively by inspecting the point cloud from different viewpoints and comparing it with the input images.
+The SfM pipeline takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The 13,579 estimated points form a sparse reconstruction. The project assesses the reconstruction quantitatively, through registered views, track support and reprojection error in working-image pixels, and qualitatively, by inspecting the point cloud from different viewpoints and comparing it with the input images. An independent facade audit and an external COLMAP baseline, both reported in Section~\ref{sec:discussion}, test whether the points belong to the building and how the result compares with an established implementation.
 
 \section{Discussion}
 \label{sec:discussion}
 % Real results, analysis
 
+All numbers below come from the calibrated form of the pipeline in Section~\ref{sec:methodology}. Instead of leaving the eleven entries of every projection matrix free, the implementation constrains all cameras to one shared pinhole intrinsic matrix with an unknown focal length, which bundle adjustment refines jointly with the poses and the 3D points. The reconstruction is therefore Euclidean up to an unknown scale, which is why Table~\ref{tab:results} can report a focal length in pixels while all distances remain in arbitrary units.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    Metric & Result \\
+    \midrule
+    Source video & 35.76 s, 1{,}074 frames \\
+    Working images & 49 at \(720 \times 1280\) \\
+    Image pairs tested / verified & 150 / 141 \\
+    Registered views & \textbf{49/49} \\
+    Sparse scene points & \textbf{13{,}579} \\
+    Active observations & 38{,}223 \\
+    Points observed by \(\geq 3\) views & 4{,}624 \\
+    Points observed by \(\geq 5\) views & \textbf{1{,}412} \\
+    Final reprojection RMSE & \textbf{0.655 px} \\
+    Median / 95th-percentile residual & 0.361 / 1.374 px \\
+    Median maximum triangulation angle & 2.87\(^{\circ}\) \\
+    Estimated shared focal length & 832 \(\rightarrow\) 647.53 px \\
+    Facade points, \(\geq 2\) / \(\geq 3\) annotated views & \textbf{911} / 166 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Main reconstruction result on the 49-frame UOB Innovation Hub sequence. Residuals are measured on active observations in working-image pixels after the final filter.}
+  \label{tab:results}
+\end{table}
+
+\subsection{Registration and map support}
+\label{sec:discussion-registration}
+
+Table~\ref{tab:results} summarizes the run. All 49 working images were registered from a seed pair consisting of working frames 4 and 5 (source frames 89 and 112). The remaining 47 cameras were each accepted on the first perspective-n-point (PnP) attempt, with between 142 and 492 3D--2D correspondences, an inlier ratio of at least 0.41 and a median residual of at most 2.25 px. No view required a retry and none was rejected by the final checks.
+
+Registration success should not be confused with usable geometry. Of the 150 scheduled image pairs, 141 passed geometric verification, and of the 20 highest-ranked seed candidates, 15 were rejected for insufficient parallax or a cheirality violation even though some had more than 800 verified inliers. The accepted seed had the largest median angle among the usable candidates, \(3.38^{\circ}\). This pattern already indicates the central difficulty of the sequence: the camera translates along the street while facing the building, so correspondences are plentiful but the angular separation between viewing rays is small.
+
+The map holds 13{,}579 points with 38{,}223 active observations. Of these, 8{,}955 points (65.9\%) are observed by exactly two views, 4{,}624 by at least three and 1{,}412 by at least five; the longest track spans 28 views. Two-view points dominate, so most depths rest on a single ray pair. The median of the per-point maximum triangulation angle is only \(2.87^{\circ}\), with a 95th percentile of \(15.5^{\circ}\). At such angles a small image error maps to a comparatively large depth error, and part of that error can be absorbed by the shared focal length~\cite{hartley2004mvg}. The reprojection residual therefore measures agreement between the observations and the fitted model; it is not an independent measurement of 3D accuracy. Figure~\ref{fig:scene} shows the map together with the 49 registered cameras.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/sfm_scene_cameras.png}
+  \caption{Sparse reconstruction of the street-facing side: 13{,}579 colored scene points and the 49 registered camera centers, seen obliquely and from above. Points are colored from the working images and all distances are in arbitrary units.}
+  \label{fig:scene}
+\end{figure}
+
+Bundle adjustment consistently improved the agreement. On the fixed observation set of the final focal pass (38{,}387 observations) the RMSE fell from 0.719 to 0.677 px, and after the final filter (38{,}156 observations) from 0.663 to 0.653 px. The 3 px final gate then removed 99 points and 325 observations, and the re-optimization that followed removed 7 more points. The delivered map retains 13{,}579 points with an RMSE of 0.655 px, a median of 0.361 px, a 95th percentile of 1.374 px and a maximum of 2.989 px. Because the gate rejects any observation beyond 3 px, these figures describe the retained map; they do not quantify the observations that were discarded.
+
+\subsection{Evidence on the building facade}
+\label{sec:discussion-facade}
+
+A low reprojection error says nothing about whether the points belong to the building. We therefore annotated conservative interior regions of the cylindrical blocks in nine views spread over the sequence: working frames 3, 4 and 5 (source frames 67, 89 and 112), frames 23, 24 and 25 (514, 536 and 559) and frames 35, 36 and 37 (782, 805 and 827). Roads, vegetation, vehicles, lamp posts, columns and the dark elevator cores were excluded. The labels were drawn after reconstruction and were never used for matching, pose estimation, triangulation or bundle adjustment.
+
+A point counts as facade-supported only if, within the same annotated view, both its measured feature position and its final predicted projection lie inside an eroded region. Of the 13{,}579 scene points, 2{,}450 have at least two active observations in annotated views and 1{,}826 fall inside at least one region. Requiring the condition in at least two views leaves 911 points, and requiring it in at least three leaves 166. The support distribution (745 points in exactly two annotated views, 156 in three, 6 in four, 3 in five and 1 in six) shows that support is spread over hundreds of distinct tracks; hits that occur in only one annotated view are discarded. Between 106 and 337 confirmed observations fall in each annotated view (Figure~\ref{fig:facade-support}), with the middle and late views contributing the most, where the facade fills the frame.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\linewidth]{figures/sfm_facade_support.jpg}
+  \caption{Facade audit in the nine annotated views (working frames 3, 4, 5, 23, 24, 25, 35, 36 and 37). Green areas are the conservative interior regions of the cylindrical blocks; cyan circles mark observations of points confirmed in at least two annotated views. Roads, vegetation, vehicles, columns and the dark cores are excluded.}
+  \label{fig:facade-support}
+\end{figure}
+
+The facade subset is fitted as accurately as the rest of the map: its 2{,}003 confirmed observations give an RMSE of 0.662 px, and the median of its per-point maximum triangulation angle is \(2.45^{\circ}\). Figure~\ref{fig:facade-points} shows the 911 points from two viewpoints. They concentrate on the horizontal ribbing of the green panels and along the floor edges, reproducing the structure visible in the input frames, while the dark elevator cores and the shadowed panels contribute little. The counts are therefore a conservative lower bound tied to nine annotated views, not the total number of building points, and they depend on how the regions were drawn.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/sfm_facade_points.png}
+  \caption{The 911 points supported in at least two annotated facade views, shown from two viewpoints. The color of each point is sampled from the working images; the axes are a reorientation of the common world coordinates for display, in arbitrary units.}
+  \label{fig:facade-points}
+\end{figure}
+
+\subsection{Coverage and the limits of a street-facing capture}
+\label{sec:discussion-coverage}
+
+Figure~\ref{fig:scene} shows that the camera centers follow a nearly straight path at street level and all face the building, so the reconstruction covers one side of the structure. The camera walks along the frontage, so each block is seen frontally only over a short interval and obliquely for most of the sequence. Background campus buildings and the pavement are reconstructed as well and are excluded by the facade regions. The trajectory does not close a loop, and no view observes the rear or the roof of the building.
+
+The narrow baseline limits both density and reliability. On the same video, the default 25-frame configuration registered only 5 of 25 views and recovered 1{,}320 points at 0.847 px RMSE; at that spacing, most unregistered views lacked sufficient 3D--2D support even though they were connected by verified matches. The 49-frame run also changes the feature budget, grid balancing, contrast enhancement and descriptor ratio settings, so the improvement cannot be attributed to frame density alone; we read the comparison as evidence that sparse sampling of this sequence is brittle rather than as an isolated ablation.
+
+Other capture effects weaken the result. Vehicles and pedestrians move through the foreground and produce matches that violate the static-scene assumption; most are removed by the geometric gates, but there is no explicit motion segmentation. Auto-exposure and white balance change between frames, and the fixed zero-distortion model means that residual lens distortion, together with a possible shift of the principal point under electronic stabilization, is absorbed into the focal length and the poses. The single shared camera is an approximation of one phone lens over 36 seconds, not a measured calibration.
+
+\subsection{Comparison with an external COLMAP baseline}
+\label{sec:discussion-colmap}
+
+Table~\ref{tab:colmap} compares the result with COLMAP~\cite{schonberger2016sfm}, run as an external baseline on the same 49 images, the same 150 scheduled pairs, one shared pinhole camera and the same 832 px \mbox{initialization}. Both methods register all 49 views, and both place the scene in the same volume: a similarity fit on the 49 shared camera centers gives a median center discrepancy of 0.38\% of the trajectory RMS radius, with a 95th percentile of 1.28\%. Because the centers are nearly collinear along the street, that alignment barely constrains rotation about the walking direction, so we use it to compare coverage and structure rather than to certify orientation.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    Metric & Native & COLMAP \\
+    \midrule
+    Registered views & 49/49 & 49/49 \\
+    Local features (49 frames) & 222{,}863 & 555{,}077 \\
+    Verified image-pair edges & 36{,}608 & 123{,}951 \\
+    Sparse scene points & 13{,}579 & 36{,}948 \\
+    Active observations & 38{,}223 & 112{,}145 \\
+    Median residual & \textbf{0.361 px} & 0.438 px \\
+    Reprojection RMSE & \textbf{0.655 px} & 0.858 px \\
+    Observations beyond 3 px & \textbf{0} & 710 \\
+    Shared focal length & 647.53 px & 638.13 px \\
+    Facade points, \(\geq 2\) annotated views & 911 & \textbf{3{,}775} \\
+    Facade points, \(\geq 3\) annotated views & 166 & \textbf{789} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Native reconstruction and external COLMAP baseline on identical inputs and evaluation rules. COLMAP observations were de-duplicated for repeated observations of the same feature in one image. Residuals are computed by the same evaluator in working-image pixels.}
+  \label{tab:colmap}
+\end{table}
+
+COLMAP recovers 36{,}948 points, 2.72 times our total, and its facade counts are 3{,}775 and 789, or 4.14 and 4.75 times ours. The difference is explained by the correspondences rather than by a different scene: COLMAP detects 555{,}077 local features (2.49 times our 222{,}863) and verifies 123{,}951 edges against our 36{,}608, so it triangulates many more tracks that our 5{,}000-feature, grid-balanced, 0.78-ratio configuration never proposes. Our map is sparser and less complete, especially on the facade.
+
+Our map nevertheless has the lower residual under the common evaluator: 0.655 px against 0.858 px, with no observation beyond 3 px against 710 for COLMAP. Part of this gap comes from the filters: our run enforces a 3 px gate on raw working pixels before export, whereas COLMAP's observations are evaluated as produced. A stricter feature budget and ratio also favor fewer, better-conditioned matches, which lowers residuals at the cost of density. We therefore read the comparison as a trade-off between completeness and residual consistency, not as evidence that one implementation is more accurate. Figure~\ref{fig:colmap} shows both maps after alignment with identical display limits: they occupy the same volume, COLMAP is denser on the facade, and neither covers the rear of the building.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/sfm_colmap_comparison.png}
+  \caption{Native reconstruction (top) and the external COLMAP baseline (bottom) from the same 49 working images, 150 image pairs and 832 px focal initialization. Columns show the full scene, facade points supported in at least two annotated views and facade points supported in at least three. Both maps were similarity-aligned on all 49 shared cameras and drawn with identical limits.}
+  \label{fig:colmap}
+\end{figure}
+
+The focal lengths agree closely: 647.53 px against 638.13 px, a difference of 1.5\%, and both lie far from the 832 px initialization. That two independent implementations, given the same images and the same initial value, converge to nearly the same intrinsic scale is supporting evidence for the estimated focal length, although both share the narrow-baseline ambiguity discussed above.
+
+\subsection{Limitations}
+\label{sec:discussion-limitations}
+
+The evidence supports a sparse reconstruction of the street-facing side, and it should not be read as a metric survey. No calibration target, EXIF focal length or surveyed control point was available, so the focal length and the depths compensate each other to some degree and the scale is arbitrary; no claim about absolute accuracy can be made. The facade labels were drawn by the authors, and although the audit rule is conservative and independent of the reconstruction, the reported counts depend on the nine chosen views and on the region boundaries. The error statistics are conditioned on the final 3 px gate. The output is a sparse point set rather than a surface: the panels between the confirmed points are unsampled, and no dense multi-view stereo stage was run. Finally, COLMAP is an external baseline with its own filters and defaults, so the comparison is between two delivered maps, not between two identical algorithms.
+
 \section{Conclusion}
 \label{sec:conclusion}
+
+This project reconstructed the street-facing side of UOB Innovation Hub from a single handheld video of 35.76 s and 1{,}074 frames. Using 49 uniformly sampled \(720 \times 1280\) working images, the incremental pipeline registered all 49 views and produced a colored sparse map of 13{,}579 points from 38{,}223 active observations, with a final reprojection RMSE of 0.655 px. Bundle adjustment refined the shared focal length from an initial 832 px to 647.53 px. An after-the-fact audit of nine annotated views tied 911 points to conservative interior regions of the cylindrical blocks in at least two views, and 166 in at least three, which shows that the map represents the building itself and not only the street, the trees and the pavement.
+
+The result also defines its own limits. The street-facing trajectory gives a narrow baseline, with a median maximum triangulation angle of \(2.87^{\circ}\), and most points are observed by only two views, so the low residual is partly a consequence of the final 3 px gate. Without an independent calibration or control points, the intrinsic parameters and the depths remain coupled and the scale is arbitrary. Within those limits the reconstruction is consistent: a 25-frame run with the default configuration registered only 5 of 25 views; a denser external COLMAP baseline reproduced nearly the same camera path and focal length (638.13 px), but a denser map at a higher residual (0.858 px); and the facade audit localizes a substantial subset of the points on the ribbed panels of the structure.
+
+Three directions follow. First, denser sampling combined with stronger correspondence, for example learned local features and matching or explicit loop closure with global bundle adjustment, should raise the share of points seen by three or more views and reduce the reliance on two-view depth. Second, a calibration target recorded with the same lens and crop, or reliable EXIF and sensor metadata, would decouple the focal length from the depth and support an absolute rather than a relative claim. Third, the sparse map is a natural input to dense multi-view stereo, which would turn the sampled facade into a surface and make the reconstruction directly comparable with the building; surveyed control points would fix the scale and allow the error to be measured rather than inferred.
 
 \section{Generative AI disclosure}
 
@@ -236,7 +368,8 @@ OpenAI Codex was used to:
 \begin{enumerate}
   \item create the LaTeX report template;
   \item verify the citation and reference-list formatting;
-  \item check and correct mathematical notation, formula consistency, spelling, and grammar of the report.
+  \item check and correct mathematical notation, formula consistency, spelling, and grammar of the report;
+  \item draft the Discussion and Conclusion sections from the recorded experiment metrics.
 \end{enumerate}
 
 \bibliographystyle{unsrt}
