@@ -12,6 +12,7 @@
 \usepackage{algpseudocode}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{xurl}
 
 \definecolor{linkblue}{HTML}{174A8B}
 \hypersetup{
@@ -225,6 +226,8 @@ In this way, bundle adjustment solves the following optimization problem.
 The experiment uses \(M = 49\) images of UOB Innovation Hub taken from different viewpoints. In each image \(I_i, i = 1, \dots, M\), the project records the 2D pixel coordinates \(\mathbf u_{ij}\) of the landmarks observed in that image. The landmark index \(j\) links corresponding observations across images, forming 15,551 candidate tracks.
 
 The SfM pipeline takes the images and their 2D observations as input and estimates projection matrices \(\mathbf P_i\) and homogeneous 3D point coordinates \(\mathbf X_j\). The 13,579 estimated points form a sparse reconstruction. The project assesses the reconstruction quantitatively, through registered views, track support and reprojection error in working-image pixels, and qualitatively, by inspecting the point cloud from different viewpoints and comparing it with the input images. An independent facade audit and an external COLMAP baseline, both reported in Section~\ref{sec:discussion}, test whether the points belong to the building and how the result compares with an established implementation.
+
+The implementation, the locked experiment configuration, the recorded metrics and the facade annotations are available in the project repository at \url{https://github.com/Jingshuai-QIAN/ai6121_project}, together with the commands that reproduce the main result.
 
 \section{Discussion}
 \label{sec:discussion}
